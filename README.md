@@ -17,13 +17,13 @@ Este projeto visa a construção de uma API, WebApp e Mobile para o gerenciament
 1. Test-Driven Development
 2. Desenvolvimento Ágil com Kanban
 3. Processo de Software Ágil
-  - Elencar requisito
-  - Modelar o requisito
-  - Elaborar o caso de uso
-  - Desenvolver
-  - Entregar
+    1. Elencar requisito
+    2. Modelar o requisito
+    3. Elaborar o caso de uso
+    4. Desenvolver
+    5. Entregar
 4. Continuos Integration
 5. Continuos Delivery
 
 ## Features
-- [] Levantamento inicial dos requisitos para a primeira feature
+- [x] Levantamento inicial dos requisitos para a primeira feature
