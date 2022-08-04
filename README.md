@@ -1,2 +1,3 @@
 # Finance
-Repositório de estudos. Desenvolvimento de aplicação para o gerenciamento financeiro.
+Repositório de estudos. 
+Desenvolvimento de aplicação para o gerenciamento financeiro.
