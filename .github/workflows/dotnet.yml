@@ -28,6 +28,6 @@ jobs:
       with:
         image: gabrieljunio/finance-api
         tags: latest
-        registry: docker.io
+        registry: ghcr.io
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
