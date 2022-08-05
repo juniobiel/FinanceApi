@@ -18,11 +18,11 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ./src/Finance.sln
+      run: dotnet restore ./Finance.sln
     - name: Build
-      run: dotnet build --no-restore ./src/Finance.sln
+      run: dotnet build --no-restore ./Finance.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./src/Finance.sln
+      run: dotnet test --no-build --verbosity normal ./Finance.sln
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
