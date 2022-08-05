@@ -24,9 +24,10 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal ./src/Finance.sln
     - name: Build and Push Docker Image
-      uses: mr-smithers-excellent/docker-build-push@v5
+      uses: mr-smithers-excellent/docker-build-push@v5.6
       with:
         image: gabrieljunio/finance-api
+        tags: latest
         registry: docker.io
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
