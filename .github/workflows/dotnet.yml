@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore ../../src/Finance.sln
+      run: dotnet restore ./src/Finance.sln
     - name: Build
-      run: dotnet build --no-restore ../../src/Finance.sln
+      run: dotnet build --no-restore ./src/Finance.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal ../../src/Finance.sln
+      run: dotnet test --no-build --verbosity normal ./src/Finance.sln
