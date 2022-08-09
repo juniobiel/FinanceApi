@@ -3,9 +3,11 @@ using Api.Configs;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddApiConfig();
 builder.Services.AddSwaggerConfig();
+builder.Services.AddIdentityConfiguration(connectionString);
 
 var app = builder.Build();
 
