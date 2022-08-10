@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 
 
-namespace Api.Config.Swagger
+namespace Api.Configs.Swagger
 {
     public static class SwaggerConfig
     {

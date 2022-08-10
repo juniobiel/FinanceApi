@@ -1,4 +1,5 @@
-using Api.Config.Swagger;
+using Api.Configs.Swagger;
+using Api.Configs.JWT;
 using Api.Configs;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
@@ -15,6 +16,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddApiConfig();
 builder.Services.AddSwaggerConfig();
 builder.Services.AddIdentityConfiguration(connectionString);
+builder.Services.AddJWTConfiguration(builder.Configuration);
 
 var app = builder.Build();
 

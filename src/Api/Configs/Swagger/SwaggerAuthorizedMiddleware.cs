@@ -1,4 +1,4 @@
-﻿namespace Api.Config.Swagger
+﻿namespace Api.Configs.Swagger
 {
     public class SwaggerAuthorizedMiddleware
     {
