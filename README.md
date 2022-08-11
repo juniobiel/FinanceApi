@@ -7,9 +7,10 @@ Este projeto visa a construção de uma API para o gerenciamento financeiro e es
 
 ## Tecnologias
 1. Linguagem de Programação Backend - C# com .NET Framework
-3. Banco de Dados - SQL Server com Entity Framework
+3. Banco de Dados - PostgreSQL com Entity Framework
 4. Hospedagem da Api - Google Cloud
-5. CI/CD com GitHub Actions
+5. Hospedagem do Banco de dados - Heroku
+6. CI/CD com GitHub Actions
 
 ## Práticas de Desenvolvimento
 1. Test-Driven Development
@@ -23,5 +24,16 @@ Este projeto visa a construção de uma API para o gerenciamento financeiro e es
 4. Continuos Integration
 5. Continuos Delivery
 
-## Features
-- [x] Levantamento inicial dos requisitos para a primeira feature
+## Postgres SQL Docker
+
+Após fazer o download da imagem do PGSQL no docker, rode o seguinte comando.
+
+```
+docker run -d -p 5432:5432 
+    --name financedb-postgres 
+    -e POSTGRES_PASSWORD=admin@123456 
+    -e POSTGRES_USER=admin 
+    -e POSTGRES_DB=finance 
+    postgres
+```
+Após configurar e rodar o container, é só conectar a ferramenta DBMS passando o `localhost:5432` e as credenciais da imagem
