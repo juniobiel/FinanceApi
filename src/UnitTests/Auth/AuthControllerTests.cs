@@ -21,7 +21,7 @@ namespace UnitTests.Auth
 
         [Fact(DisplayName = "Criar conta e retornar sucesso")]
         [Trait("create-account", "sucess with account")]
-        public async Task ReturnActionResult_StatusCode200_WithCreatedAccount()
+        public async Task CreateAccount_WhenCalled_ReturnStatusCode200()
         {
             //Arrange
             var newUser = new RegisterUserViewModel
@@ -33,13 +33,18 @@ namespace UnitTests.Auth
 
             _mocker.GetMock<UserManager<IdentityUser>>()
                 .Setup(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(new IdentityResult()));
+                .ReturnsAsync(IdentityResult.Success);
+            _mocker.GetMock<UserManager<IdentityUser>>()
+                .Setup(x => x.AddToRoleAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
+                .ReturnsAsync(IdentityResult.Success);
 
             //Act
             var result = await _authService.CreateAccount(newUser);
 
             //Assert
-            Assert.IsType<ActionResult<OkResult>>(result);
+            Assert.IsType<ObjectResult>(result);
+            Assert.Equal(200, result.StatusCode.Value);
+            Assert.IsType<RegisterUserViewModel>(result.Value);
 
         }
     }
