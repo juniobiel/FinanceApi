@@ -3,6 +3,7 @@ using Api.Extensions.User.ViewModels;
 using Business.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Moq;
 using Moq.AutoMock;
 
@@ -45,7 +46,28 @@ namespace UnitTests.Auth
             Assert.IsType<ObjectResult>(result);
             Assert.Equal(200, result.StatusCode.Value);
             Assert.IsType<RegisterUserViewModel>(result.Value);
+        }
 
+        [Fact(DisplayName = "Criar conta com Model Incorreto e retornar BadRequest")]
+        [Trait("create-account", "error with viewmodel")]
+        public async Task CreateAccount_WhenModelStateIsNotValid_ReturnStatusCode400()
+        {
+            //Arrange
+            var newUser = new RegisterUserViewModel
+            {
+                Email = "teste",
+                Password = "teste",
+                ConfirmPassword = "teste"
+            };
+            _authService.ModelState.AddModelError("error", "ModelState is not valid");
+
+            //Act
+            var result = await _authService.CreateAccount(newUser);
+
+            //Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, result.StatusCode.Value);
+            Assert.IsType<SerializableError>(result.Value);
         }
     }
 }
