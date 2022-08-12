@@ -29,7 +29,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("create-account")]
-        public async Task<ActionResult> CreateAccount( RegisterUserViewModel registerUser )
+        public async Task<ObjectResult> CreateAccount( RegisterUserViewModel registerUser )
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -50,8 +50,8 @@ namespace Api.Controllers
             var addRole = await _userManager.AddToRoleAsync(user, "RegularUsers");
             await _signInManager.SignInAsync(user, isPersistent: true);
 
-            if(addRole.Succeeded)
-                return Ok(registerUser);
+            if (addRole.Succeeded)
+                return StatusCode(200, registerUser);
             else
                 return BadRequest("Não consegui adicionar o usuário");
         }
