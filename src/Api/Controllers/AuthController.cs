@@ -58,7 +58,7 @@ namespace Api.Controllers
 
 
         [HttpPost("sign-in")]
-        public async Task<ActionResult> Login( LoginUserViewModel loginUser )
+        public async Task<ObjectResult> Login( LoginUserViewModel loginUser )
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -66,12 +66,12 @@ namespace Api.Controllers
 
 
             if (result.IsLockedOut)
-                return Forbid("Usuário temporariamente bloqueado por tentativas inválidas");
+                return StatusCode( StatusCodes.Status423Locked,"Usuário temporariamente bloqueado por tentativas inválidas");
 
             if (!result.Succeeded)
                 return BadRequest("Não foi possível logar " + loginUser);
 
-            return Ok(await GerarJwt(loginUser.Email));
+            return StatusCode(200, await GerarJwt(loginUser.Email));
         }
 
         [HttpGet("sign-out")]

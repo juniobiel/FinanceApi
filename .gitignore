@@ -351,3 +351,7 @@ MigrationBackup/
 
 # Production Environment Variables
 appsettings.Production.json
+
+# SonarQube files
+.sonarqube
+coverage.xml
