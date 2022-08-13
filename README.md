@@ -37,3 +37,42 @@ docker run -d -p 5432:5432
     postgres
 ```
 Após configurar e rodar o container, é só conectar a ferramenta DBMS passando o `localhost:5432` e as credenciais da imagem
+
+## SonarQube
+Após fazer o download da imagem do PGSQL e do SonarQube, rode os seguintes comandos.
+
+### Criar uma rede para o docker pgsql
+```
+docker network create sonar_network
+```
+
+### Rodar um container do pgsql para o SonarQube
+```
+docker run --name sonar-pgsql 
+    -e POSTGRES_PASSWORD=sonar 
+    -e POSTGRES_USER=sonar 
+    -e POSTGRES_DB=sonar 
+    -v pgdata:/var/lib/postgresql/data 
+    -p 5433:5433 -it 
+    --network sonar_network sonarqube
+```
+Por padrão, o pgsql utiliza a porta 5432, porém já é utilizada na outra instância do banco de dados utilizado para a aplicação.
+
+### Habilitar o redimensionamento do wsl2 do docker
+Quando tentar rodar o container do sonarqube e ele automaticamente parar, rode o seguinte comando:
+```
+wsl -d docker-desktop
+sysctl -w vm.max_map_count=262144
+```
+### Rodar um container do SonarQube
+Por fim, vamos rodar o container do SonarQube
+```
+docker run -it --name sonarqube
+    -p 9000:9000
+    -e sonar.jdbc.username=sonar
+    -e sonar.jdbc.password=sonar
+    -e sonar.jdbc.url=jdbc.postgresql://sonar-pgsql/sonar
+    --network sonar_network sonarqube
+```
+### Rodar análise do SonarQube
+Para rodar a análise, é só executar o arquivo sonarqube.bat de dentro do cmd.
