@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
-
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Configs.Swagger
 {
+    [ExcludeFromCodeCoverage]
     public static class SwaggerConfig
     {
         /* Adding Swagger Configs */
@@ -34,7 +35,7 @@ namespace Api.Configs.Swagger
                                 Id = "Bearer"
                             }
                         },
-                        new string[] {}
+                        Array.Empty<string>()
                     }
                 });
             });
@@ -45,14 +46,13 @@ namespace Api.Configs.Swagger
         /* Using Swagger Configs */
         public static IApplicationBuilder UseSwaggerConfig( this IApplicationBuilder app, IApiVersionDescriptionProvider provider )
         {
-            //app.UseMiddleware<SwaggerAuthorizedMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI(
                 options =>
                 {
-                    foreach (var description in provider.ApiVersionDescriptions)
+                    foreach (var description in provider.ApiVersionDescriptions.Select(x => x.GroupName))
                     {
-                        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                        options.SwaggerEndpoint($"/swagger/{description}/swagger.json", description.ToUpperInvariant());
                     }
                 });
 

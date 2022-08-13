@@ -1,7 +1,9 @@
 ﻿using Business.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Extensions.User
 {
+    [ExcludeFromCodeCoverage]
     public class AspNetUser : IUser
     {
         private readonly IHttpContextAccessor _accessor;
@@ -28,9 +30,9 @@ namespace Api.Extensions.User
             return _accessor.HttpContext.User.Identity.IsAuthenticated;
         }
 
-        public bool IsInRole( string role )
+        public bool IsInRole( string roleName )
         {
-            return _accessor.HttpContext.User.IsInRole(role);
+            return _accessor.HttpContext.User.IsInRole(roleName);
         }
     }
 }

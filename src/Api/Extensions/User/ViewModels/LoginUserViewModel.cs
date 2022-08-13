@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Extensions.User.ViewModels
 {
+    [ExcludeFromCodeCoverage]
     public class LoginUserViewModel
     {
         [Required(ErrorMessage = "O campo {0} é obrigatório")]

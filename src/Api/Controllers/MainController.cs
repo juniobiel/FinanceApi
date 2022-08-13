@@ -1,8 +1,10 @@
 ﻿using Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Controllers
 {
+    [ExcludeFromCodeCoverage]
     [ApiController]
     public class MainController : ControllerBase
     {

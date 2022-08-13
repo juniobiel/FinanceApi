@@ -2,9 +2,11 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Configs.Swagger
 {
+    [ExcludeFromCodeCoverage]
     public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
     {
         readonly IApiVersionDescriptionProvider provider;
@@ -21,13 +23,14 @@ namespace Api.Configs.Swagger
 
         static OpenApiInfo CreateInfoForApiVersion( ApiVersionDescription description )
         {
+            var uri = "https://opensource.org/licenses/MIT";
             var info = new OpenApiInfo
             {
                 Title = "Finance API",
                 Version = description.ApiVersion.ToString(),
                 Description = "API para controle e gestão de Finanças",
                 Contact = new OpenApiContact() { Name = "Gabriel Júnio", Email = "gabrieljunio.fp@gmail.com" },
-                License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
+                License = new OpenApiLicense() { Name = "MIT", Url = new Uri(uri) }
             };
 
             if (description.IsDeprecated)
