@@ -42,9 +42,14 @@ namespace Api.Controllers
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
-            foreach (var error in result.Errors)
+            if(result.Errors.Any())
             {
-               return BadRequest(error.Description);
+                var errors = new List<string>();
+                foreach (var error in result.Errors)
+                {
+                    errors.Add(error.Description);
+                }
+                return BadRequest(errors);
             }
 
             var addRole = await _userManager.AddToRoleAsync(user, "RegularUsers");
