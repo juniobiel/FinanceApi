@@ -119,7 +119,7 @@ namespace UnitTests.Controllers
             //Assert
             Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, result.StatusCode.Value);
-            Assert.IsType<string>(result.Value);
+            Assert.IsType<List<string>>(result.Value);
         }
 
         [Fact(DisplayName = "Criar conta mockando error para o AddToRoleAsync")]
