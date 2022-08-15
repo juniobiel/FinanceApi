@@ -23,6 +23,7 @@ namespace Api
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
             builder.Services.AddApiConfig();
+            builder.Services.AddDependenciesInjections();
             builder.Services.AddSwaggerConfig();
             builder.Services.AddIdentityConfiguration(connectionString);
             builder.Services.AddJWTConfiguration(builder.Configuration);

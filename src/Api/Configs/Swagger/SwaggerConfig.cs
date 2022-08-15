@@ -37,7 +37,7 @@ namespace Api.Configs.Swagger
                         },
                         Array.Empty<string>()
                     }
-                });
+                }) ;
             });
 
             return services;
@@ -46,13 +46,14 @@ namespace Api.Configs.Swagger
         /* Using Swagger Configs */
         public static IApplicationBuilder UseSwaggerConfig( this IApplicationBuilder app, IApiVersionDescriptionProvider provider )
         {
+            //app.UseMiddleware<SwaggerAuthorizedMiddleware>();
             app.UseSwagger();
             app.UseSwaggerUI(
                 options =>
                 {
-                    foreach (var description in provider.ApiVersionDescriptions.Select(x => x.GroupName))
+                    foreach (var description in provider.ApiVersionDescriptions)
                     {
-                        options.SwaggerEndpoint($"/swagger/{description}/swagger.json", description.ToUpperInvariant());
+                        options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                     }
                 });
 

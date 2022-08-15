@@ -23,14 +23,13 @@ namespace Api.Configs.Swagger
 
         static OpenApiInfo CreateInfoForApiVersion( ApiVersionDescription description )
         {
-            var uri = "https://opensource.org/licenses/MIT";
             var info = new OpenApiInfo
             {
                 Title = "Finance API",
                 Version = description.ApiVersion.ToString(),
                 Description = "API para controle e gestão de Finanças",
                 Contact = new OpenApiContact() { Name = "Gabriel Júnio", Email = "gabrieljunio.fp@gmail.com" },
-                License = new OpenApiLicense() { Name = "MIT", Url = new Uri(uri) }
+                License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT") }
             };
 
             if (description.IsDeprecated)
