@@ -54,7 +54,11 @@ namespace UnitTests.Controllers
                 Password = "teste123456",
                 ConfirmPassword = "teste123456"
             };
+            
 
+            _mocker.GetMock<UserManager<IdentityUser>>()
+                .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult((IdentityUser) null));
             _mocker.GetMock<UserManager<IdentityUser>>()
                 .Setup(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
@@ -93,6 +97,34 @@ namespace UnitTests.Controllers
             Assert.IsType<SerializableError>(result.Value);
         }
 
+        [Fact(DisplayName = "Criar conta com Email já cadastrado")]
+        [Trait("create-account", "Status 400")]
+        public async Task CreateAccount_WhenEmailIsRegistered_ReturnStatusCode400()
+        {
+            //Arrange
+            var newUser = new RegisterUserViewModel
+            {
+                Email = "teste@teste.com",
+                Password = "teste",
+                ConfirmPassword = "teste"
+            };
+            var userRegistered = new IdentityUser
+            {
+                Email = "teste@teste.com"
+            };
+            _mocker.GetMock<UserManager<IdentityUser>>()
+                .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(userRegistered));
+
+            //Act
+            var result = await _authService.CreateAccount(newUser);
+
+            //Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, result.StatusCode.Value);
+            Assert.IsType<string>(result.Value);
+        }
+
         [Fact(DisplayName = "Criar conta mockando error para o CreateAsync")]
         [Trait("create-account", "Status 400")]
         public async Task CreateAccount_WithResultErrorInCreateAsync_ReturnStatusCode400()
@@ -109,6 +141,9 @@ namespace UnitTests.Controllers
                 Description = "error",
                 Code = "teste"
             };
+            _mocker.GetMock<UserManager<IdentityUser>>()
+                .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult((IdentityUser)null));
             _mocker.GetMock<UserManager<IdentityUser>>()
                 .Setup(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Failed(error));
@@ -138,6 +173,9 @@ namespace UnitTests.Controllers
                 Description = "error",
                 Code = "teste"
             };
+            _mocker.GetMock<UserManager<IdentityUser>>()
+                .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult((IdentityUser)null));
             _mocker.GetMock<UserManager<IdentityUser>>()
                 .Setup(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);
