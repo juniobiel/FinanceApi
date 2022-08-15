@@ -40,6 +40,10 @@ namespace Api.Controllers
                 EmailConfirmed = true
             };
 
+            var cadastrado = await _userManager.FindByEmailAsync(user.Email);
+            if (cadastrado != null)
+                return BadRequest("Usuário já cadastrado");
+
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
             if(result.Errors.Any())
