@@ -61,7 +61,7 @@ namespace Api.Controllers
             if (addRole.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: true);
-                return StatusCode(200, registerUser);
+                return StatusCode(200, "O usuário foi cadastrado com sucesso!");
             }
             else
             {
