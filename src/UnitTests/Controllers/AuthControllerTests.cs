@@ -72,7 +72,7 @@ namespace UnitTests.Controllers
             //Assert
             Assert.IsType<ObjectResult>(result);
             Assert.Equal(200, result.StatusCode.Value);
-            Assert.IsType<RegisterUserViewModel>(result.Value);
+            Assert.IsType<string>(result.Value);
         }
 
         [Fact(DisplayName = "Criar conta com Model Incorreto")]
