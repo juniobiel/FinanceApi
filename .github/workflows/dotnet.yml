@@ -51,19 +51,19 @@ jobs:
 
     environment: finance-prod
     steps:
-      -name: App Settings Variable Substitution
-      uses: microsoft/variable-substitiuion@v1
-      with: 
-        files: 'appsettings.json'
-      env:
-        ConnectionStrings.DefaultConnection: ${{ secrets.POSTGRES_CONNECTION }}
-        AppSettings: ${{ secrets.APP_SETTINGS }}
-      -name: Deploying into Heroku
-      uses: AkhileshNS/heroku-deploy@v3.12.12
-      with:
-        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-        heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
-        heroku_email: ${{ secrets.HEROKU_EMAIL }}
-        usedocker: true
+      - name: App Settings Variable Substitution
+        uses: microsoft/variable-substitiuion@v1
+        with: 
+          files: 'appsettings.json'
+        env:
+          ConnectionStrings.DefaultConnection: ${{ secrets.POSTGRES_CONNECTION }}
+          AppSettings: ${{ secrets.APP_SETTINGS }}
+      - name: Deploying into Heroku
+        uses: AkhileshNS/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
 
 
