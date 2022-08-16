@@ -11,4 +11,7 @@ RUN dotnet publish ./Finance.sln -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR ./
 COPY --from=build /out .
-ENTRYPOINT ["dotnet", "Api.dll"]
+# ENTRYPOINT ["dotnet", "Api.dll"]
+
+# Usa porta dinâmica do Heroku
+CMD ASPNETCORE_URLS="http://*:$PORT" dotnet Api.dll

@@ -2,9 +2,11 @@
 using Api.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Configs
 {
+    [ExcludeFromCodeCoverage]
     public static class IdentityConfig
     {
         public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services, string connectionString)

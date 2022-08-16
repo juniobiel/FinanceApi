@@ -1,11 +1,12 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace Api.Data.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public partial class Identity : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

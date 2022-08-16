@@ -1,5 +1,8 @@
-﻿namespace Api.Config.Swagger
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Api.Configs.Swagger
 {
+    [ExcludeFromCodeCoverage]
     public class SwaggerAuthorizedMiddleware
     {
         private readonly RequestDelegate _next;
