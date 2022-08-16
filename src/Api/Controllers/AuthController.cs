@@ -40,20 +40,34 @@ namespace Api.Controllers
                 EmailConfirmed = true
             };
 
+            var cadastrado = await _userManager.FindByEmailAsync(user.Email);
+            if (cadastrado != null)
+                return BadRequest("Usuário já cadastrado");
+
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
-            foreach (var error in result.Errors)
+            if(result.Errors.Any())
             {
-               BadRequest(error.Description);
+                var errors = new List<string>();
+                foreach (var error in result.Errors)
+                {
+                    errors.Add(error.Description);
+                }
+                return BadRequest(errors);
             }
 
             var addRole = await _userManager.AddToRoleAsync(user, "RegularUsers");
-            await _signInManager.SignInAsync(user, isPersistent: true);
 
             if (addRole.Succeeded)
-                return StatusCode(200, registerUser);
+            {
+                await _signInManager.SignInAsync(user, isPersistent: true);
+                return StatusCode(200, "O usuário foi cadastrado com sucesso!");
+            }
             else
-                return BadRequest("Não consegui adicionar o usuário");
+            {
+                await _userManager.DeleteAsync(user);
+                return BadRequest("Não foi possível cadastrar o usuário");
+            }
         }
 
 
@@ -63,7 +77,6 @@ namespace Api.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var result = await _signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
-
 
             if (result.IsLockedOut)
                 return StatusCode( StatusCodes.Status423Locked,"Usuário temporariamente bloqueado por tentativas inválidas");
@@ -75,10 +88,10 @@ namespace Api.Controllers
         }
 
         [HttpGet("sign-out")]
-        public async Task<ActionResult> Logout()
+        public async Task<ObjectResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return Ok("Você foi desconectado!");
+            return StatusCode(200, "Você foi desconectado!");
         }
 
 

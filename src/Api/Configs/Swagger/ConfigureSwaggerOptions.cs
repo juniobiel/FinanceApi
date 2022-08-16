@@ -2,9 +2,11 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Configs.Swagger
 {
+    [ExcludeFromCodeCoverage]
     public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
     {
         readonly IApiVersionDescriptionProvider provider;

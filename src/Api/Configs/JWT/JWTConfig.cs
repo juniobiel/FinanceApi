@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Api.Configs.JWT
 {
-    public static class JWTConfig
+    [ExcludeFromCodeCoverage]
+    public static class JwtConfig
     {
         public static IServiceCollection AddJWTConfiguration(this IServiceCollection services, IConfiguration configuration)
         {

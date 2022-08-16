@@ -1,7 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 
 namespace Api.Extensions.User
 {
+    [ExcludeFromCodeCoverage]
     public static class ClaimsPrincipalExtensions
     {
         public static string GetUserId(this ClaimsPrincipal principal)
@@ -11,7 +13,7 @@ namespace Api.Extensions.User
                 throw new ArgumentException("Not found", nameof(principal));
             }
             
-            var claim = principal.FindFirst(ClaimTypes.NameIdentifier); ;
+            var claim = principal.FindFirst(ClaimTypes.NameIdentifier); 
             return claim?.Value;
         }
 

@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
-
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Configs.Swagger
 {
+    [ExcludeFromCodeCoverage]
     public static class SwaggerConfig
     {
         /* Adding Swagger Configs */
@@ -34,9 +35,9 @@ namespace Api.Configs.Swagger
                                 Id = "Bearer"
                             }
                         },
-                        new string[] {}
+                        Array.Empty<string>()
                     }
-                });
+                }) ;
             });
 
             return services;

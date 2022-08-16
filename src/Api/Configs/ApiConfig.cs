@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Configs
 {
+    [ExcludeFromCodeCoverage]
     public static class ApiConfig
     {
         public static IServiceCollection AddApiConfig(this IServiceCollection services)

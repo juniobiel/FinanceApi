@@ -2,40 +2,47 @@ using Api.Configs.Swagger;
 using Api.Configs.JWT;
 using Api.Configs;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using System.Diagnostics.CodeAnalysis;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace Api
+{
+    [ExcludeFromCodeCoverage]
+    internal class Program
+    {
+        private static void Main( string[] args )
+        {
 
-builder.Configuration
-    .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("appsettings.json", true, true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
-    .AddEnvironmentVariables();
+            var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            builder.Configuration
+                .SetBasePath(builder.Environment.ContentRootPath)
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
+                .AddEnvironmentVariables();
 
-builder.Services.AddApiConfig();
-builder.Services.AddSwaggerConfig();
-builder.Services.AddIdentityConfiguration(connectionString);
-builder.Services.AddJWTConfiguration(builder.Configuration);
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-var app = builder.Build();
+            builder.Services.AddApiConfig();
+            builder.Services.AddDependenciesInjections();
+            builder.Services.AddSwaggerConfig();
+            builder.Services.AddIdentityConfiguration(connectionString);
+            builder.Services.AddJWTConfiguration(builder.Configuration);
 
-var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+            var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+            var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
-app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-app.MapControllers();
+            app.MapControllers();
 
-app.UseSwaggerConfig(apiVersionDescriptionProvider);
+            app.UseSwaggerConfig(apiVersionDescriptionProvider);
 
-app.Run();
+            app.Run();
+        }
+    }
+
+}

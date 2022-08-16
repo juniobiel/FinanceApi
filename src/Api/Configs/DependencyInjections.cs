@@ -3,9 +3,11 @@ using Api.Extensions.User;
 using Business.Interfaces;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Api.Configs
 {
+    [ExcludeFromCodeCoverage]
     public static class DependencyInjections
     {
         public static IServiceCollection AddDependenciesInjections(this IServiceCollection services)
