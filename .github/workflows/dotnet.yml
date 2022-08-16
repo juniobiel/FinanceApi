@@ -1,4 +1,4 @@
-name: FINANCE API DOTNET PIPELINE
+name: .NET CI Heroku
 
 on:
   push:
@@ -23,6 +23,11 @@ jobs:
       run: dotnet build --no-restore ./Finance.sln
     - name: Test
       run: dotnet test --no-build --verbosity normal ./Finance.sln
+  
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Set up Docker Buildx
@@ -41,39 +46,24 @@ jobs:
         tags: gabrieljunio/finance-api:latest
 
   deploy:
-    name: Deploy into Gcloud Account
+    name: Deploy into Heroku Account
     runs-on: ubuntu-latest
-    # Environment Production
+
     environment: finance-prod
-    env:
-      IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/finance-api:latest
     steps:
-      # Git checkout
-      - name: Checkout
-        uses: actions/checkout@v2
+      -name: App Settings Variable Substitution
+      uses: microsoft/variable-substitiuion@v1
+      with: 
+        files: 'appsettings.json'
+      env:
+        ConnectionStrings.DefaultConnection: ${{ secrets.POSTGRES_CONNECTION }}
+        AppSettings: ${{ secrets.APP_SETTINGS }}
+      -name: Deploying into Heroku
+      uses: AkhileshNS/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: ${{ secrets.HEROKU_API_NAME }}
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        usedocker: true
 
-      # Login to GCP
-      - uses: google-github-actions/setup-gcloud@v0.2.0
-        with:
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      # gcloud configure docker
-      - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
-
-      # build image
-      - name: Build Docker image
-        run: docker build -t $IMAGE_NAME .
-
-      # push image to registry
-      - name: Push Docker image
-        run: docker push $IMAGE_NAME
-
-      # deploy image
-      - name: Deploy Docker image
-        run: gcloud run deploy finance-api 
-            --image $IMAGE_NAME --region southamerica-east1 
-            --memory 128Mi --min-instances 0 --max-instances 1 
-            --platform managed --port 80 --allow-unauthenticated 
-            --set-env-vars DefaultConnection=${{ secrets.POSTGRES_CONNECTION }}
