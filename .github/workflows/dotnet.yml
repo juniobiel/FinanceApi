@@ -54,7 +54,7 @@ jobs:
     environment: finance-prod
     steps:
       - name: App Settings Variable Substitution
-        uses: microsoft/variable-substitiuion@v1
+        uses: microsoft/variable-substitution@v1
         with: 
           files: 'appsettings.json'
         env:
