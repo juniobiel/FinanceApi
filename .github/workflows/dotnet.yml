@@ -60,7 +60,6 @@ jobs:
         with: 
           files: '**/appsettings.json'
         env:
-          ConnectionStrings.DefaultConnection: ${{ secrets.POSTGRES_CONNECTION }}
           AppSettings: ${{ secrets.APP_SETTINGS }}
       - name: Deploying into Heroku
         uses: AkhileshNS/heroku-deploy@v3.12.12
