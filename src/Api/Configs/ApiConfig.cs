@@ -26,8 +26,7 @@ namespace Api.Configs
                     builder => builder
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowAnyHeader());
 
                 options.AddPolicy("Production",
                 builder => builder
