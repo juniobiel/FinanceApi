@@ -6,7 +6,7 @@ namespace Api.Configs
     [ExcludeFromCodeCoverage]
     public static class ApiConfig
     {
-        public static IServiceCollection AddApiConfig(this IServiceCollection services)
+        public static IServiceCollection AddApiConfig( this IServiceCollection services )
         {
             services.AddControllers();
             services.AddApiVersioning(options =>
@@ -22,12 +22,20 @@ namespace Api.Configs
             });
             services.AddCors(options =>
             {
-                options.AddPolicy("ApiPolicy",
+                options.AddPolicy("Development",
                     builder => builder
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
+
+                options.AddPolicy("Production",
+                builder => builder
+                    .WithMethods("GET", "POST", "PUT", "DELETE")
+                    .WithOrigins("https://my-finance-api-1.herokuapp.com/")
+                    .SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .AllowAnyHeader());
+
             });
 
             return services;

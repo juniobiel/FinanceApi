@@ -28,8 +28,17 @@ namespace Api
             var app = builder.Build();
 
             var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-
-            app.UseHttpsRedirection();
+            
+            if(IsDevelopment)
+            {
+                app.UseCors("Development");
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseCors("Productions");
+                app.UseHttpsRedirection();
+            }
 
             app.UseAuthentication();
             app.UseAuthorization();
