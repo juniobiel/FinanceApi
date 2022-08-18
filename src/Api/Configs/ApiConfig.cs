@@ -20,6 +20,15 @@ namespace Api.Configs
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ApiPolicy",
+                    builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
             return services;
         }
