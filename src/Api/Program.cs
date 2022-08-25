@@ -42,7 +42,7 @@ namespace Api
             }
             else
             {
-                app.UseCors("Productions");
+                app.UseCors("Production");
                 app.UseHttpsRedirection();
             }
 
