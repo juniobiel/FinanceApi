@@ -82,7 +82,7 @@ namespace Api.Controllers
                 return StatusCode( StatusCodes.Status423Locked,"Usuário temporariamente bloqueado por tentativas inválidas");
 
             if (!result.Succeeded)
-                return BadRequest("Não foi possível logar " + loginUser);
+                return BadRequest("Não foi possível logar");
 
             return StatusCode(200, await GerarJwt(loginUser.Email));
         }
