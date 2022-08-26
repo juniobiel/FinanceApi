@@ -33,7 +33,8 @@ namespace Api.Configs
                     .WithMethods("GET", "POST", "PUT", "DELETE")
                     .WithOrigins("https://6307bd20f9190b05cdee01bd--rococo-panda-df1aaf.netlify.app/")
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .AllowAnyHeader());
+                    .AllowAnyHeader()
+                    .AllowCredentials());
 
             });
 
