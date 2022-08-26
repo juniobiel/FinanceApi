@@ -31,7 +31,7 @@ namespace Api.Configs
                 options.AddPolicy("Production",
                 builder => builder
                     .WithMethods("GET", "POST", "PUT", "DELETE")
-                    .WithOrigins("https://rococo-panda-df1aaf.netlify.app/")
+                    .WithOrigins("https://rococo-panda-df1aaf.netlify.app")
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
                     .AllowCredentials());
