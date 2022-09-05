@@ -10,7 +10,11 @@ namespace Business.Models
         [Key]
         public Guid Id { get; set; }
         public string Ticker { get; set; }
-        public decimal CurrentPrice { get; set; }
+        public double CurrentPrice { get; set; }
         public AssetType AssetType { get; set; }
+        public Guid UpdatedByUser { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public DateTime LastUpdateBySystem { get; set; }
+
     }
 }
