@@ -5,6 +5,6 @@ namespace Business.Services.AssetService
     public interface IAssetService
     {
         Task<int> CreateAsset(string ticker);
-        Task UpdateAssetCurrentPrice(string ticker);
+        Task<int> UpdateAssetCurrentPrice(string ticker);
     }
 }

@@ -1,8 +1,10 @@
-﻿using Business.Models;
+﻿using Business.Interfaces;
+using Business.Models;
 using Business.Models.Enums;
 using Business.Services.AlphaVantage;
 using Business.Services.AlphaVantage.ViewModels;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 using UnitTests.Services;
 
 namespace Business.Services.AssetService
@@ -11,42 +13,37 @@ namespace Business.Services.AssetService
     {
         readonly IAssetRepository _assetRepository;
         readonly IAlphaVantageService _alphaVantageService;
-        private string ApiKey;
+        readonly IUser _appUser;
 
         public AssetService(IAssetRepository assetRepository, 
-            IAlphaVantageService alphaVantageService)
+            IAlphaVantageService alphaVantageService,
+            IUser appUser)
         {
             _assetRepository = assetRepository;
             _alphaVantageService = alphaVantageService;
+            _appUser = appUser;
         }
 
         public async Task<int> CreateAsset( string ticker )
-        {
+        {                        
             var searchResult = await _alphaVantageService.SearchAsset(ticker);
-
-            if (searchResult == null)
-                return StatusCodes.Status400BadRequest;
-
-            if (searchResult.BestMatches.Count > 1)
+            if (searchResult.BestMatches.Count == 0)
                 return StatusCodes.Status400BadRequest;
 
             var filteredAsset = FilterAsset(searchResult);
-            
-            if (!filteredAsset.Ticker.Equals(ticker))
-                return StatusCodes.Status400BadRequest;
 
             var createResult = await _assetRepository.CreateNewAsset(filteredAsset);
+            if (createResult != 200)
+                return StatusCodes.Status400BadRequest;                                            
 
-            if (createResult == 200)
-            {
-                await UpdateAssetCurrentPrice(ticker);
-                return StatusCodes.Status200OK;
-            }                
-            else
+            var priceUpdate = await UpdateAssetCurrentPrice(ticker);
+            if(priceUpdate != 200)
                 return StatusCodes.Status400BadRequest;
+
+            return StatusCodes.Status200OK;
         }
 
-        private Asset FilterAsset(AlphaVantageSearchResult searchResult)
+        private static Asset FilterAsset(AlphaVantageSearchResult searchResult)
         {
             var listToFilter = new List<string>
             {
@@ -61,7 +58,6 @@ namespace Business.Services.AssetService
             {
                 Ticker = result.symbol
             };
-
 
             foreach (var filter in listToFilter)
             {
@@ -83,10 +79,29 @@ namespace Business.Services.AssetService
             return asset;
         }
 
-        public async Task UpdateAssetCurrentPrice(string ticker)
+        public async Task<int> UpdateAssetCurrentPrice(string ticker)
         {
             var result = await _alphaVantageService.GetAssetHistory(ticker);
 
+            var asset = await _assetRepository.GetAsset(ticker);
+            var lastDay = DateTime.Now.Date;
+            var currentPriceResult = result.TimeSeries[lastDay.ToString()].Close;
+
+            if(currentPriceResult == null || currentPriceResult == "")
+            {
+                lastDay.AddDays(-1);
+                currentPriceResult = result.TimeSeries[lastDay.ToString()].Close;
+            }
+
+            asset.CurrentPrice = double.Parse(currentPriceResult, CultureInfo.InvariantCulture);
+            asset.UpdatedAt = DateTime.Now;
+            asset.UpdatedByUser = _appUser.GetUserId();
+
+            var assetUpdate = await _assetRepository.UpdateAsset(asset);
+            if (assetUpdate != 200)
+                return StatusCodes.Status400BadRequest;
+
+            return StatusCodes.Status200OK;
         }
     }
 }
