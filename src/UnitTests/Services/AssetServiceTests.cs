@@ -1,8 +1,8 @@
 ﻿using Business.Models;
+using Business.Models.Enums;
 using Business.Services.AlphaVantage;
 using Business.Services.AlphaVantage.ViewModels;
 using Business.Services.AssetService;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.AutoMock;
 
@@ -12,6 +12,7 @@ namespace UnitTests.Services
     {
         readonly AutoMocker _mocker;
         readonly AssetService _service;
+
         public AssetServiceTests()
         {
             _mocker = new AutoMocker();
@@ -19,12 +20,102 @@ namespace UnitTests.Services
         }
 
 
-        [Fact(DisplayName = "Criar um asset e tipar para FII")]
+        [Fact(DisplayName = "Criar um asset que não existe na base de dados e tipar para FII")]
         [Trait("create-asset", "Status 200")]
-        public async void CreateAsset_WhenCalled_ReturnCode200()
+        public async void CreateAsset_WhenAssetDoesNotExistsInDataBase_ReturnCode200()
         {
             //Arrange
-            var searchResult = new AlphaVantageSearchResult
+            AlphaVantageSearchResult searchResult = new()
+            {
+                BestMatches = new List<AlphaVantageAssetInformation>
+                {
+                    new AlphaVantageAssetInformation
+                    {
+                        symbol = "BRCO11.SAO",
+                        name = "Bresco - Fundo De Investimento Imobiliario",
+                        type = "ETF",
+                        region = "Brazil/Sao Paolo",
+                        marketOpen = "10:00",
+                        marketClose = "17:30",
+                        timezone = "UTC-03",
+                        currency = "BRL",
+                        matchScore =  "1.0000"
+                    }
+                }
+            };
+            Asset asset = new()
+            {
+                Id = Guid.NewGuid(),
+                Ticker = "BRCO11",
+                AssetType = AssetType.FII,
+                CurrentPrice = 0
+            };
+            AlphaVantageAssetHistory assetHistory = new()
+            {
+                MetaData = new(),
+                TimeSeries = new ()
+            };
+            assetHistory.TimeSeries.Add(DateTime.Now.Date.ToString(), new DayReport()
+            {
+                Open = "10.00",
+                High = "15.00",
+                Low = "9.00",
+                Close = "12.50",
+                Volume = "152000"
+            });
+
+            _mocker.GetMock<IAlphaVantageService>()
+                .Setup(x => x.SearchAsset(It.IsAny<string>()))
+                .Returns(Task.FromResult(searchResult));
+            _mocker.GetMock<IAssetRepository>()
+                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
+                .Returns(Task.FromResult(200));
+            _mocker.GetMock<IAlphaVantageService>()
+                .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
+                .Returns(Task.FromResult(assetHistory));
+            _mocker.GetMock<IAssetRepository>()
+                .Setup(x => x.GetAsset(It.IsAny<string>()))
+                .Returns(Task.FromResult(asset));
+            _mocker.GetMock<IAssetRepository>()
+                .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
+                .Returns(Task.FromResult(200));
+
+            //Act
+            var result = await _service.CreateAsset("BRCO11");
+
+            //Assert
+            Assert.IsType<int>(result);
+            Assert.Equal(200, result);
+        }
+
+        [Fact(DisplayName = "Criar um asset que não existe na bolsa de valores e retornar status 400")]
+        [Trait("create-asset", "Status 400")]
+        public async void CreateAsset_WhenAssetDoesNotExistsOfficially_ReturnCode400()
+        {
+            //Arrange
+            AlphaVantageSearchResult searchResult = new()
+            {
+                BestMatches = new List<AlphaVantageAssetInformation>()
+            };
+
+            _mocker.GetMock<IAlphaVantageService>()
+                .Setup(x => x.SearchAsset(It.IsAny<string>()))
+                .Returns(Task.FromResult(searchResult));
+
+            //Act
+            var result = await _service.CreateAsset("BRCO1");
+
+            //Assert
+            Assert.IsType<int>(result);
+            Assert.Equal(400, result);
+        }
+
+        [Fact(DisplayName = "Houve erro ao criar o asset no banco de dados, deve retornar status 400")]
+        [Trait("create-asset", "Status 400")]
+        public async void CreateAsset_WhenCannotCreateAtDataBase_ReturnCode400()
+        {
+            //Arrange
+            AlphaVantageSearchResult searchResult = new()
             {
                 BestMatches = new List<AlphaVantageAssetInformation>
                 {
@@ -48,17 +139,82 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult(200));
+                .Returns(Task.FromResult(400));
+
             //Act
-            var teste1 = new AlphaVantageService(_mocker.GetMock<IConfiguration>().Object);
-            var teste = await teste1.GetAssetHistory("BRCO11");
             var result = await _service.CreateAsset("BRCO11");
-
-
 
             //Assert
             Assert.IsType<int>(result);
-            Assert.Equal(200, result);
+            Assert.Equal(400, result);
+        }
+
+        [Fact(DisplayName = "Houve erro ao atualizar o asset no banco de dados, deve retornar status 400")]
+        [Trait("create-asset", "Status 400")]
+        public async void CreateAsset_WhenCannotUpdateAtDataBase_ReturnCode400()
+        {
+            //Arrange
+            AlphaVantageSearchResult searchResult = new()
+            {
+                BestMatches = new List<AlphaVantageAssetInformation>
+                {
+                    new AlphaVantageAssetInformation
+                    {
+                        symbol = "BRCO11.SAO",
+                        name = "Bresco - Fundo De Investimento Imobiliario",
+                        type = "ETF",
+                        region = "Brazil/Sao Paolo",
+                        marketOpen = "10:00",
+                        marketClose = "17:30",
+                        timezone = "UTC-03",
+                        currency = "BRL",
+                        matchScore =  "1.0000"
+                    }
+                }
+            };
+            Asset asset = new()
+            {
+                Id = Guid.NewGuid(),
+                Ticker = "BRCO11",
+                AssetType = AssetType.FII,
+                CurrentPrice = 0
+            };
+            AlphaVantageAssetHistory assetHistory = new()
+            {
+                MetaData = new(),
+                TimeSeries = new()
+            };
+            assetHistory.TimeSeries.Add(DateTime.Now.Date.ToString(), new DayReport()
+            {
+                Open = "10.00",
+                High = "15.00",
+                Low = "9.00",
+                Close = "12.50",
+                Volume = "152000"
+            });
+
+            _mocker.GetMock<IAlphaVantageService>()
+                .Setup(x => x.SearchAsset(It.IsAny<string>()))
+                .Returns(Task.FromResult(searchResult));
+            _mocker.GetMock<IAssetRepository>()
+                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
+                .Returns(Task.FromResult(200));
+            _mocker.GetMock<IAssetRepository>()
+                .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
+                .Returns(Task.FromResult(400));
+            _mocker.GetMock<IAlphaVantageService>()
+                .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
+                .Returns(Task.FromResult(assetHistory));
+            _mocker.GetMock<IAssetRepository>()
+                .Setup(x => x.GetAsset(It.IsAny<string>()))
+                .Returns(Task.FromResult(asset));
+
+            //Act
+            var result = await _service.CreateAsset("BRCO11");
+
+            //Assert
+            Assert.IsType<int>(result);
+            Assert.Equal(400, result);
         }
     }
 }
