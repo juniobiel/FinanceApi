@@ -1,13 +1,13 @@
-﻿using Business.Models;
+﻿using Business.Interfaces.Repositories;
+using Business.Models;
 using System.Diagnostics.CodeAnalysis;
-using UnitTests.Services;
 
 namespace Data.Repositories
 {
     [ExcludeFromCodeCoverage]
     public class AssetRepository : IAssetRepository
     {
-        public Task<int> CreateNewAsset( Asset asset )
+        public Task<Asset> CreateNewAsset( Asset asset )
         {
             throw new NotImplementedException();
         }
