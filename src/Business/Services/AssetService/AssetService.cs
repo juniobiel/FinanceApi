@@ -1,11 +1,11 @@
 ﻿using Business.Interfaces;
+using Business.Interfaces.Repositories;
 using Business.Models;
 using Business.Models.Enums;
 using Business.Services.AlphaVantage;
 using Business.Services.AlphaVantage.ViewModels;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
-using UnitTests.Services;
 
 namespace Business.Services.AssetService
 {
@@ -15,35 +15,35 @@ namespace Business.Services.AssetService
         readonly IAlphaVantageService _alphaVantageService;
         readonly IUser _appUser;
 
-        public AssetService(IAssetRepository assetRepository, 
+        public AssetService( IAssetRepository assetRepository,
             IAlphaVantageService alphaVantageService,
-            IUser appUser)
+            IUser appUser )
         {
             _assetRepository = assetRepository;
             _alphaVantageService = alphaVantageService;
             _appUser = appUser;
         }
 
-        public async Task<int> CreateAsset( string ticker )
-        {                        
+        public async Task<Asset> CreateAsset( string ticker )
+        {
             var searchResult = await _alphaVantageService.SearchAsset(ticker);
             if (searchResult.BestMatches.Count == 0)
-                return StatusCodes.Status400BadRequest;
+                return null;
 
             var filteredAsset = FilterAsset(searchResult);
 
             var createResult = await _assetRepository.CreateNewAsset(filteredAsset);
-            if (createResult != 200)
-                return StatusCodes.Status400BadRequest;                                            
+            if (createResult == null)
+                return null;
 
             var priceUpdate = await UpdateAssetCurrentPrice(ticker);
-            if(priceUpdate != 200)
-                return StatusCodes.Status400BadRequest;
+            if (priceUpdate != 200)
+                return null;
 
-            return StatusCodes.Status200OK;
+            return createResult;
         }
 
-        private static Asset FilterAsset(AlphaVantageSearchResult searchResult)
+        private static Asset FilterAsset( AlphaVantageSearchResult searchResult )
         {
             var listToFilter = new List<string>
             {
@@ -81,7 +81,7 @@ namespace Business.Services.AssetService
             return asset;
         }
 
-        public async Task<int> UpdateAssetCurrentPrice(string ticker)
+        public async Task<int> UpdateAssetCurrentPrice( string ticker )
         {
             var result = await _alphaVantageService.GetAssetHistory(ticker);
 
@@ -95,7 +95,7 @@ namespace Business.Services.AssetService
                 lastDay = lastDay.AddDays(-1);
                 result.TimeSeries.TryGetValue(lastDay.ToString(), out lastDayReport);
             }
-                
+
 
             asset.CurrentPrice = double.Parse(lastDayReport.Close, CultureInfo.InvariantCulture);
             asset.UpdatedAt = DateTime.Now;
@@ -106,6 +106,11 @@ namespace Business.Services.AssetService
                 return StatusCodes.Status400BadRequest;
 
             return StatusCodes.Status200OK;
+        }
+
+        public Task<Asset> GetAsset( string ticker )
+        {
+            throw new NotImplementedException();
         }
     }
 }

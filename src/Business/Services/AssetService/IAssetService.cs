@@ -1,10 +1,11 @@
-﻿using Business.Services.AlphaVantage.ViewModels;
+﻿using Business.Models;
 
 namespace Business.Services.AssetService
 {
     public interface IAssetService
     {
-        Task<int> CreateAsset(string ticker);
+        Task<Asset> CreateAsset( string ticker );
         Task<int> UpdateAssetCurrentPrice(string ticker);
+        Task<Asset> GetAsset( string ticker );
     }
 }
