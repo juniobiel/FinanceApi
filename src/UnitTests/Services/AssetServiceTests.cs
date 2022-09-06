@@ -1,4 +1,5 @@
-﻿using Business.Models;
+﻿using Business.Interfaces.Repositories;
+using Business.Models;
 using Business.Models.Enums;
 using Business.Services.AlphaVantage;
 using Business.Services.AlphaVantage.ViewModels;
@@ -19,9 +20,10 @@ namespace UnitTests.Services
             _service = _mocker.WithSelfMock<AssetService>();
         }
 
+        #region AssetCreate
         [Fact(DisplayName = "Criar um asset que não existe na base de dados e tipar para FII")]
-        [Trait("create-asset", "Status 200")]
-        public async void CreateAsset_WhenAssetDoesNotExistsInDataBaseTypeFII_ReturnCode200()
+        [Trait("create-asset", "Success Return Asset")]
+        public async void CreateAsset_WhenAssetDoesNotExistsInDataBaseTypeFII_ReturnAsset()
         {
             //Arrange
             AlphaVantageSearchResult searchResult = new()
@@ -44,7 +46,7 @@ namespace UnitTests.Services
             };
             Asset asset = new()
             {
-                Id = Guid.NewGuid(),
+                AssetId = Guid.NewGuid(),
                 Ticker = "BRCO11",
                 AssetType = AssetType.FII,
                 CurrentPrice = 0
@@ -52,7 +54,7 @@ namespace UnitTests.Services
             AlphaVantageAssetHistory assetHistory = new()
             {
                 MetaData = new(),
-                TimeSeries = new ()
+                TimeSeries = new()
             };
             assetHistory.TimeSeries.Add(DateTime.Now.Date.ToString(), new DayReport()
             {
@@ -68,7 +70,7 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult(200));
+                .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
                 .Returns(Task.FromResult(assetHistory));
@@ -83,13 +85,12 @@ namespace UnitTests.Services
             var result = await _service.CreateAsset("BRCO11");
 
             //Assert
-            Assert.IsType<int>(result);
-            Assert.Equal(200, result);
+            Assert.IsType<Asset>(result);
         }
 
         [Fact(DisplayName = "Criar um asset que não existe na base de dados e tipar para ETF")]
-        [Trait("create-asset", "Status 200")]
-        public async void CreateAsset_WhenAssetDoesNotExistsInDataBaseTypeETF_ReturnCode200()
+        [Trait("create-asset", "Success Return Asset")]
+        public async void CreateAsset_WhenAssetDoesNotExistsInDataBaseTypeETF_ReturnAsset()
         {
             //Arrange
             AlphaVantageSearchResult searchResult = new()
@@ -112,7 +113,7 @@ namespace UnitTests.Services
             };
             Asset asset = new()
             {
-                Id = Guid.NewGuid(),
+                AssetId = Guid.NewGuid(),
                 Ticker = "BOVA11",
                 AssetType = AssetType.ETF,
                 CurrentPrice = 0
@@ -136,7 +137,7 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult(200));
+                .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
                 .Returns(Task.FromResult(assetHistory));
@@ -151,13 +152,12 @@ namespace UnitTests.Services
             var result = await _service.CreateAsset("BOVA11");
 
             //Assert
-            Assert.IsType<int>(result);
-            Assert.Equal(200, result);
+            Assert.IsType<Asset>(result);
         }
 
         [Fact(DisplayName = "Criar um asset que não existe na base de dados e tipar para ETF")]
-        [Trait("create-asset", "Status 200")]
-        public async void CreateAsset_WhenAssetDoesNotExistsInDataBaseTypeAcao_ReturnCode200()
+        [Trait("create-asset", "Success Return Asset")]
+        public async void CreateAsset_WhenAssetDoesNotExistsInDataBaseTypeAcao_ReturnAsset()
         {
             //Arrange
             AlphaVantageSearchResult searchResult = new()
@@ -180,7 +180,7 @@ namespace UnitTests.Services
             };
             Asset asset = new()
             {
-                Id = Guid.NewGuid(),
+                AssetId = Guid.NewGuid(),
                 Ticker = "PETR4",
                 AssetType = AssetType.Acao,
                 CurrentPrice = 0
@@ -204,7 +204,7 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult(200));
+                .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
                 .Returns(Task.FromResult(assetHistory));
@@ -219,13 +219,12 @@ namespace UnitTests.Services
             var result = await _service.CreateAsset("PETR4");
 
             //Assert
-            Assert.IsType<int>(result);
-            Assert.Equal(200, result);
+            Assert.IsType<Asset>(result);
         }
 
-        [Fact(DisplayName = "Criar um asset que não existe na bolsa de valores e retornar status 400")]
-        [Trait("create-asset", "Status 400")]
-        public async void CreateAsset_WhenAssetDoesNotExistsOfficially_ReturnCode400()
+        [Fact(DisplayName = "Criar um asset que não existe na bolsa de valores e retornar null")]
+        [Trait("create-asset", "Return Null")]
+        public async void CreateAsset_WhenAssetDoesNotExistsOfficially_ReturnNull()
         {
             //Arrange
             AlphaVantageSearchResult searchResult = new()
@@ -241,13 +240,12 @@ namespace UnitTests.Services
             var result = await _service.CreateAsset("BRCO1");
 
             //Assert
-            Assert.IsType<int>(result);
-            Assert.Equal(400, result);
+            Assert.Null(result);
         }
 
-        [Fact(DisplayName = "Houve erro ao criar o asset no banco de dados, deve retornar status 400")]
-        [Trait("create-asset", "Status 400")]
-        public async void CreateAsset_WhenCannotCreateAtDataBase_ReturnCode400()
+        [Fact(DisplayName = "Houve erro ao criar o asset no banco de dados, deve retornar null")]
+        [Trait("create-asset", "Return Null")]
+        public async void CreateAsset_WhenCannotCreateAtDataBase_ReturnNull()
         {
             //Arrange
             AlphaVantageSearchResult searchResult = new()
@@ -274,19 +272,18 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult(400));
+                .Returns(Task.FromResult((Asset) null));
 
             //Act
             var result = await _service.CreateAsset("BRCO11");
 
             //Assert
-            Assert.IsType<int>(result);
-            Assert.Equal(400, result);
+            Assert.Null(result);
         }
 
-        [Fact(DisplayName = "Houve erro ao atualizar o asset no banco de dados, deve retornar status 400")]
-        [Trait("create-asset", "Status 400")]
-        public async void CreateAsset_WhenCannotUpdateAtDataBase_ReturnCode400()
+        [Fact(DisplayName = "Houve erro ao atualizar o asset no banco de dados, deve retornar null")]
+        [Trait("create-asset", "Return Null")]
+        public async void CreateAsset_WhenCannotUpdateAtDataBase_ReturnNull()
         {
             //Arrange
             AlphaVantageSearchResult searchResult = new()
@@ -309,7 +306,7 @@ namespace UnitTests.Services
             };
             Asset asset = new()
             {
-                Id = Guid.NewGuid(),
+                AssetId = Guid.NewGuid(),
                 Ticker = "BRCO11",
                 AssetType = AssetType.FII,
                 CurrentPrice = 0
@@ -333,7 +330,7 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult(200));
+                .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
                 .Returns(Task.FromResult(400));
@@ -348,13 +345,12 @@ namespace UnitTests.Services
             var result = await _service.CreateAsset("BRCO11");
 
             //Assert
-            Assert.IsType<int>(result);
-            Assert.Equal(400, result);
+            Assert.Null(result);
         }
 
         [Fact(DisplayName = "O dia atual ainda não consta na consulta do AlphaService")]
-        [Trait("create-asset", "Status 200")]
-        public async void CreateAsset_WhenAlphaServiceHasNotUpdatedLastDay_ReturnCode200()
+        [Trait("create-asset", "Success Return Asset")]
+        public async void CreateAsset_WhenAlphaServiceHasNotUpdatedLastDay_ReturnAsset()
         {
             //Arrange
             AlphaVantageSearchResult searchResult = new()
@@ -377,7 +373,7 @@ namespace UnitTests.Services
             };
             Asset asset = new()
             {
-                Id = Guid.NewGuid(),
+                AssetId = Guid.NewGuid(),
                 Ticker = "BRCO11",
                 AssetType = AssetType.FII,
                 CurrentPrice = 0
@@ -401,7 +397,7 @@ namespace UnitTests.Services
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult(200));
+                .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAssetRepository>()
                 .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
                 .Returns(Task.FromResult(200));
@@ -416,8 +412,11 @@ namespace UnitTests.Services
             var result = await _service.CreateAsset("BRCO11");
 
             //Assert
-            Assert.IsType<int>(result);
-            Assert.Equal(200, result);
+            Assert.IsType<Asset>(result);
+
         }
+
+        #endregion
+
     }
 }
