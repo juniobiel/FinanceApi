@@ -71,6 +71,8 @@ namespace Business.Services.AssetService
                     else
                         asset.AssetType = AssetType.ETF;
                 }
+                else
+                    break;
             }
 
             if (result.type == "Equity")
@@ -85,15 +87,17 @@ namespace Business.Services.AssetService
 
             var asset = await _assetRepository.GetAsset(ticker);
             var lastDay = DateTime.Now.Date;
-            var currentPriceResult = result.TimeSeries[lastDay.ToString()].Close;
 
-            if(currentPriceResult == null || currentPriceResult == "")
+            result.TimeSeries.TryGetValue(lastDay.ToString(), out DayReport lastDayReport);
+
+            if (lastDayReport == null)
             {
-                lastDay.AddDays(-1);
-                currentPriceResult = result.TimeSeries[lastDay.ToString()].Close;
+                lastDay = lastDay.AddDays(-1);
+                result.TimeSeries.TryGetValue(lastDay.ToString(), out lastDayReport);
             }
+                
 
-            asset.CurrentPrice = double.Parse(currentPriceResult, CultureInfo.InvariantCulture);
+            asset.CurrentPrice = double.Parse(lastDayReport.Close, CultureInfo.InvariantCulture);
             asset.UpdatedAt = DateTime.Now;
             asset.UpdatedByUser = _appUser.GetUserId();
 
