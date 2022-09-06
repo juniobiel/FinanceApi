@@ -1,8 +1,10 @@
 ﻿using Business.Models;
+using System.Diagnostics.CodeAnalysis;
 using UnitTests.Services;
 
 namespace Data.Repositories
 {
+    [ExcludeFromCodeCoverage]
     public class AssetRepository : IAssetRepository
     {
         public Task<int> CreateNewAsset( Asset asset )

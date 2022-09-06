@@ -3,19 +3,19 @@ using Business.Services.ServiceKey;
 using Flurl.Http;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Business.Services.AlphaVantage
 {
+    [ExcludeFromCodeCoverage]
     public class AlphaVantageService : IAlphaVantageService
     {
-        readonly IConfiguration _configuration;
-        private IServiceKey _serviceKey;
+        readonly IServiceKey _serviceKey;
 
         public AlphaVantageService( IConfiguration configuration, IServiceKey serviceKey )
         {
-            _configuration = configuration;
             _serviceKey = serviceKey;
-            _serviceKey.AlphaVantageKey = _configuration["AlphaVantage_ApiKey"];
+            _serviceKey.AlphaVantageKey = configuration["AlphaVantage_ApiKey"];
         }
 
         public async Task<AlphaVantageSearchResult> SearchAsset( string ticker )

@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Business.Services.AlphaVantage.ViewModels
 {
+    [ExcludeFromCodeCoverage]
     public class AlphaVantageAssetHistory
     {
         [JsonProperty("Meta Data")]
@@ -11,6 +13,7 @@ namespace Business.Services.AlphaVantage.ViewModels
         public Dictionary<string, DayReport> TimeSeries { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class MetaData
     {
         [JsonProperty("1. Information")]
@@ -29,6 +32,7 @@ namespace Business.Services.AlphaVantage.ViewModels
         public string TimeZone { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class DayReport
     {
         [JsonProperty("1. open")]

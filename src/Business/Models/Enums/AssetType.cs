@@ -1,6 +1,6 @@
 ﻿namespace Business.Models.Enums
 {
-    public enum AssetType : int
+    public enum AssetType
     {
         Undefined = 0,
         Acao = 1,
