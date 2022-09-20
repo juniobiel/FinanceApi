@@ -6,5 +6,7 @@ namespace Business.Services.AlphaVantage
     {
         Task<AlphaVantageSearchResult> SearchAsset( string ticker );
         Task<AlphaVantageAssetHistory> GetAssetHistory( string ticker );
+        Task<double> GetAssetLastPrice( string ticker );
+
     }
 }

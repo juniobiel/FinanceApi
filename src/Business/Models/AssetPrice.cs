@@ -8,11 +8,10 @@ namespace Business.Models
     public class AssetPrice
     {
         [Key]
-        public Guid AssetId { get; set; }
+        public Guid Id { get; set; }
         public string Ticker { get; set; }
-        public double CurrentPrice { get; set; }
-        public AssetType AssetType { get; set; }
-        public Guid UpdatedByUser { get; set; }
+        public double LastPrice { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime LastUpdateBySystem { get; set; }
 

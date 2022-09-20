@@ -5,19 +5,14 @@ using System.Diagnostics.CodeAnalysis;
 namespace Data.Repositories
 {
     [ExcludeFromCodeCoverage]
-    public class AssetRepository : IAssetRepository
+    public class AssetPriceRepository : IAssetPriceRepository
     {
-        public Task<AssetPrice> CreateNewAsset( AssetPrice asset )
+        public Task<AssetPrice> CreateAssetPrice( AssetPrice asset )
         {
             throw new NotImplementedException();
         }
 
-        public Task<AssetPrice> GetAsset( string ticker )
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<int> UpdateAsset( AssetPrice asset )
+        public Task<AssetPrice> GetAssetPrice( string ticker )
         {
             throw new NotImplementedException();
         }

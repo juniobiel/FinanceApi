@@ -8,6 +8,7 @@ namespace Business.Models
     {
         [Key]
         public Guid UserAssetId { get; set; }
+        public Guid AssetPriceId { get; set; }
         public string Ticker { get; set; }
         public int TotalQuantity { get; set; }
         public double MediumPrice { get; set; }

@@ -24,8 +24,8 @@ namespace Api.Configs
             services.AddScoped<IServiceKey, ServiceKey>();
             services.AddScoped<IAlphaVantageService, AlphaVantageService>();
 
-            services.AddScoped<IAssetService, AssetService>();
-            services.AddScoped<IAssetRepository, AssetRepository>();
+            services.AddScoped<IAssetPriceService, AssetPriceService>();
+            services.AddScoped<IAssetPriceRepository, AssetPriceRepository>();
 
             services.AddScoped<IUserAssetRepository, UserAssetRepository>();
             services.AddScoped<IUserAssetService, UserAssetService>();

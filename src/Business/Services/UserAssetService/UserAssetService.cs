@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Business.Models;
+using Business.Services.AssetService;
 using System.Net;
 
 namespace Business.Services.UserAssetService
@@ -8,12 +9,15 @@ namespace Business.Services.UserAssetService
     {
         readonly IUserAssetRepository _repository;
         readonly IUser _appUser;
+        readonly IAssetPriceService _priceService;
 
         public UserAssetService( IUserAssetRepository userAssetRepository,
-            IUser appUser )
+            IUser appUser,
+            IAssetPriceService priceService )
         {
             _repository = userAssetRepository;
             _appUser = appUser;
+            _priceService = priceService;
         }
 
         public async Task<HttpStatusCode> AddToUserAsset( Asset asset )
@@ -34,10 +38,14 @@ namespace Business.Services.UserAssetService
         {
             return await _repository.GetUserAsset(ticker, _appUser.GetUserId());
         }
+
         private async Task<HttpStatusCode> CreateUserAsset( Asset asset )
         {
+            var assetPrice = await _priceService.GetOrCreateAssetPrice(asset.Ticker);
+
             UserAsset userAsset = new()
             {
+                AssetPriceId = assetPrice.Id,
                 Ticker = asset.Ticker,
                 TotalQuantity = asset.Quantity,
                 MediumPrice = asset.UnitPrice,

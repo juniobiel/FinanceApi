@@ -1,4 +1,5 @@
 ﻿using Business.Models;
+using Business.Services.AssetService;
 using Business.Services.UserAssetService;
 using Moq;
 using Moq.AutoMock;
@@ -28,6 +29,14 @@ namespace UnitTests.Services
                 UnitPrice = 9.86
             };
 
+            _mocker.GetMock<IAssetPriceService>()
+                .Setup(x => x.GetOrCreateAssetPrice(It.IsAny<string>()))
+                .ReturnsAsync(new AssetPrice
+                {
+                    Id = Guid.NewGuid(),
+                    Ticker = "VGHF11",
+                    LastPrice = 10
+                });
             _mocker.GetMock<IUserAssetRepository>()
                 .Setup(x => x.CreateUserAsset(It.IsAny<UserAsset>()))
                 .ReturnsAsync(HttpStatusCode.OK);

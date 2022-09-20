@@ -35,5 +35,22 @@ namespace Business.Services.AlphaVantage
 
             return json;
         }
+
+        public async Task<double> GetAssetLastPrice(string ticker)
+        {
+            var result = await GetAssetHistory(ticker);
+
+            var lastDay = DateTime.Now.Date;
+
+            result.TimeSeries.TryGetValue(lastDay.ToString(), out DayReport lastDayReport);
+
+            if (lastDayReport == null)
+            {
+                lastDay = lastDay.AddDays(-1);
+                result.TimeSeries.TryGetValue(lastDay.ToString(), out lastDayReport);
+            }
+
+            return double.Parse(lastDayReport.Close);
+        }
     }
 }
