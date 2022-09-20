@@ -1,5 +1,4 @@
-﻿using Business.Interfaces.Repositories;
-using Business.Models;
+﻿using Business.Models;
 using Business.Models.Enums;
 using Business.Services.AlphaVantage;
 using Business.Services.AlphaVantage.ViewModels;
@@ -44,7 +43,7 @@ namespace UnitTests.Services
                     }
                 }
             };
-            Asset asset = new()
+            AssetPrice asset = new()
             {
                 AssetId = Guid.NewGuid(),
                 Ticker = "BRCO11",
@@ -69,7 +68,7 @@ namespace UnitTests.Services
                 .Setup(x => x.SearchAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
+                .Setup(x => x.CreateNewAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
@@ -78,14 +77,14 @@ namespace UnitTests.Services
                 .Setup(x => x.GetAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
+                .Setup(x => x.UpdateAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(200));
 
             //Act
             var result = await _service.CreateAsset("BRCO11");
 
             //Assert
-            Assert.IsType<Asset>(result);
+            Assert.IsType<AssetPrice>(result);
         }
 
         [Fact(DisplayName = "Criar um asset que não existe na base de dados e tipar para ETF")]
@@ -111,7 +110,7 @@ namespace UnitTests.Services
                     }
                 }
             };
-            Asset asset = new()
+            AssetPrice asset = new()
             {
                 AssetId = Guid.NewGuid(),
                 Ticker = "BOVA11",
@@ -136,7 +135,7 @@ namespace UnitTests.Services
                 .Setup(x => x.SearchAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
+                .Setup(x => x.CreateNewAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
@@ -145,14 +144,14 @@ namespace UnitTests.Services
                 .Setup(x => x.GetAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
+                .Setup(x => x.UpdateAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(200));
 
             //Act
             var result = await _service.CreateAsset("BOVA11");
 
             //Assert
-            Assert.IsType<Asset>(result);
+            Assert.IsType<AssetPrice>(result);
         }
 
         [Fact(DisplayName = "Criar um asset que não existe na base de dados e tipar para ETF")]
@@ -178,7 +177,7 @@ namespace UnitTests.Services
                     }
                 }
             };
-            Asset asset = new()
+            AssetPrice asset = new()
             {
                 AssetId = Guid.NewGuid(),
                 Ticker = "PETR4",
@@ -203,7 +202,7 @@ namespace UnitTests.Services
                 .Setup(x => x.SearchAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
+                .Setup(x => x.CreateNewAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
@@ -212,14 +211,14 @@ namespace UnitTests.Services
                 .Setup(x => x.GetAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
+                .Setup(x => x.UpdateAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(200));
 
             //Act
             var result = await _service.CreateAsset("PETR4");
 
             //Assert
-            Assert.IsType<Asset>(result);
+            Assert.IsType<AssetPrice>(result);
         }
 
         [Fact(DisplayName = "Criar um asset que não existe na bolsa de valores e retornar null")]
@@ -271,8 +270,8 @@ namespace UnitTests.Services
                 .Setup(x => x.SearchAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
-                .Returns(Task.FromResult((Asset) null));
+                .Setup(x => x.CreateNewAsset(It.IsAny<AssetPrice>()))
+                .Returns(Task.FromResult((AssetPrice) null));
 
             //Act
             var result = await _service.CreateAsset("BRCO11");
@@ -304,7 +303,7 @@ namespace UnitTests.Services
                     }
                 }
             };
-            Asset asset = new()
+            AssetPrice asset = new()
             {
                 AssetId = Guid.NewGuid(),
                 Ticker = "BRCO11",
@@ -329,10 +328,10 @@ namespace UnitTests.Services
                 .Setup(x => x.SearchAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
+                .Setup(x => x.CreateNewAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
+                .Setup(x => x.UpdateAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(400));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
@@ -371,7 +370,7 @@ namespace UnitTests.Services
                     }
                 }
             };
-            Asset asset = new()
+            AssetPrice asset = new()
             {
                 AssetId = Guid.NewGuid(),
                 Ticker = "BRCO11",
@@ -396,10 +395,10 @@ namespace UnitTests.Services
                 .Setup(x => x.SearchAsset(It.IsAny<string>()))
                 .Returns(Task.FromResult(searchResult));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.CreateNewAsset(It.IsAny<Asset>()))
+                .Setup(x => x.CreateNewAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(asset));
             _mocker.GetMock<IAssetRepository>()
-                .Setup(x => x.UpdateAsset(It.IsAny<Asset>()))
+                .Setup(x => x.UpdateAsset(It.IsAny<AssetPrice>()))
                 .Returns(Task.FromResult(200));
             _mocker.GetMock<IAlphaVantageService>()
                 .Setup(x => x.GetAssetHistory(It.IsAny<string>()))
@@ -412,7 +411,7 @@ namespace UnitTests.Services
             var result = await _service.CreateAsset("BRCO11");
 
             //Assert
-            Assert.IsType<Asset>(result);
+            Assert.IsType<AssetPrice>(result);
 
         }
 
