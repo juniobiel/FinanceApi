@@ -1,7 +1,6 @@
 ﻿using Api.Configs.Swagger;
 using Api.Extensions.User;
 using Business.Interfaces;
-using Business.Interfaces.Repositories;
 using Business.Services.AlphaVantage;
 using Business.Services.AssetService;
 using Business.Services.ServiceKey;
