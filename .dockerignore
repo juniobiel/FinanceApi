@@ -25,3 +25,5 @@ LICENSE
 README.md
 coverage.xml
 sonarqube.bat
+**/docs
+*.drawio
