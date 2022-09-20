@@ -1,5 +1,4 @@
 ﻿using Business.Interfaces;
-using Business.Interfaces.Repositories;
 using Business.Models;
 using Business.Models.Enums;
 using Business.Services.AlphaVantage;
@@ -24,7 +23,7 @@ namespace Business.Services.AssetService
             _appUser = appUser;
         }
 
-        public async Task<Asset> CreateAsset( string ticker )
+        public async Task<AssetPrice> CreateAsset( string ticker )
         {
             var searchResult = await _alphaVantageService.SearchAsset(ticker);
             if (searchResult.BestMatches.Count == 0)
@@ -43,7 +42,7 @@ namespace Business.Services.AssetService
             return createResult;
         }
 
-        private static Asset FilterAsset( AlphaVantageSearchResult searchResult )
+        private static AssetPrice FilterAsset( AlphaVantageSearchResult searchResult )
         {
             var listToFilter = new List<string>
             {
@@ -54,7 +53,7 @@ namespace Business.Services.AssetService
             var result = searchResult.BestMatches[0];
             result.symbol = result.symbol.Replace(".SAO", string.Empty);
 
-            Asset asset = new()
+            AssetPrice asset = new()
             {
                 Ticker = result.symbol
             };
@@ -108,7 +107,7 @@ namespace Business.Services.AssetService
             return StatusCodes.Status200OK;
         }
 
-        public Task<Asset> GetAsset( string ticker )
+        public Task<AssetPrice> GetAsset( string ticker )
         {
             throw new NotImplementedException();
         }

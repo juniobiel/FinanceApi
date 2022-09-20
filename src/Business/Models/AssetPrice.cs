@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Business.Models
 {
     [ExcludeFromCodeCoverage]
-    public class Asset
+    public class AssetPrice
     {
         [Key]
         public Guid AssetId { get; set; }

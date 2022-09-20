@@ -1,85 +1,60 @@
 ﻿using Business.Interfaces;
-using Business.Interfaces.Repositories;
 using Business.Models;
-using Business.Services.AssetService;
-using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace Business.Services.UserAssetService
 {
     public class UserAssetService : IUserAssetService
     {
-        readonly IUserAssetRepository _userAssetRepository;
-        readonly IAssetService _assetService;
+        readonly IUserAssetRepository _repository;
         readonly IUser _appUser;
-        
+
         public UserAssetService( IUserAssetRepository userAssetRepository,
-            IAssetService assetService,
-            IUser appUser)
+            IUser appUser )
         {
-            _userAssetRepository = userAssetRepository;
-            _assetService = assetService;
+            _repository = userAssetRepository;
             _appUser = appUser;
         }
 
-        public async Task<int> NewPurchase( AssetPurchase purchase )
+        public async Task<HttpStatusCode> AddToUserAsset( Asset asset )
         {
-            Asset asset = await _assetService.GetAsset(purchase.Ticker);
-            asset ??= await _assetService.CreateAsset(purchase.Ticker);
+            var userAsset = await SearchAsset(asset.Ticker);
+            HttpStatusCode result;
 
-            var userAsset = await GetUserAsset(purchase.Ticker);
-            userAsset ??= await CreateUserAsset(purchase.Ticker, asset.AssetId);
+            if (userAsset == null)
+                result = await CreateUserAsset(asset);
+            else
+                result = await IncreaseUserAsset(userAsset, asset);
 
-            purchase.UserAssetId = userAsset.UserAssetId;
-            purchase.CreatedByUserId = _appUser.GetUserId();
-            purchase.CreatedAt = DateTime.Now;
-            
-            if(purchase.TotalPaid == 0)
-                purchase.TotalPaid = (purchase.UnitPrice * purchase.Quantity) + (purchase.BrokerTax + purchase.IncomeTax + purchase.OtherTaxes);
-
-            await _userAssetRepository.CreateUserPurchase(purchase);
-
-            userAsset.AssetId = asset.AssetId;
-            userAsset.CreatedAt = DateTime.Now;
-            userAsset.CreatedByUserId = _appUser.GetUserId();
-            userAsset.AssetId = asset.AssetId;
-            userAsset.TotalQuantity += purchase.Quantity;
-
-            userAsset = await UpdateMediumPrice(userAsset);
-            await _userAssetRepository.UpdateUserAsset(userAsset);
-
-            return StatusCodes.Status200OK;
+            return result;
         }
 
-        public async Task<UserAsset> CreateUserAsset( string ticker, Guid assetId )
+
+        public async Task<UserAsset> SearchAsset( string ticker )
+        {
+            return await _repository.GetUserAsset(ticker, _appUser.GetUserId());
+        }
+        private async Task<HttpStatusCode> CreateUserAsset( Asset asset )
         {
             UserAsset userAsset = new()
             {
-                AssetId = assetId,
+                Ticker = asset.Ticker,
+                TotalQuantity = asset.Quantity,
+                MediumPrice = asset.UnitPrice,
                 CreatedAt = DateTime.Now,
-                CreatedByUserId = _appUser.GetUserId(),
-                MediumPrice = 0,
-                TotalQuantity = 0
+                CreatedByUserId = _appUser.GetUserId()
             };
 
-            return await _userAssetRepository.CreateUserAsset(userAsset);
+            return await _repository.CreateUserAsset(userAsset);
         }
 
-        public async Task<UserAsset> GetUserAsset( string ticker )
+        private async Task<HttpStatusCode> IncreaseUserAsset(UserAsset userAsset, Asset asset)
         {
-            return await _userAssetRepository.GetUserAsset(ticker, _appUser.GetUserId());
-        }
+            userAsset.TotalQuantity += asset.Quantity;
+            userAsset.UpdatedAt = DateTime.Now;
+            userAsset.UpdatedByUserId = _appUser.GetUserId();
 
-        public async Task<UserAsset> UpdateMediumPrice(UserAsset userAsset)
-        {
-            var purchasesResult = await _userAssetRepository.GetPurchases(userAsset.Ticker, _appUser.GetUserId());
-            double mediumPrice = 0;
-            foreach(var purchase in purchasesResult)
-            {
-                mediumPrice += purchase.TotalPaid;
-            }
-            userAsset.MediumPrice = mediumPrice / userAsset.TotalQuantity;
-
-            return userAsset;
+            return await _repository.UpdateUserAsset(userAsset);
         }
     }
 }

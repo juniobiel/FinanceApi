@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Business.Models
 {
+    [ExcludeFromCodeCoverage]
     public class UserAsset
     {
         [Key]
         public Guid UserAssetId { get; set; }
-        public Guid AssetId { get; set; }
         public string Ticker { get; set; }
         public int TotalQuantity { get; set; }
         public double MediumPrice { get; set; }
