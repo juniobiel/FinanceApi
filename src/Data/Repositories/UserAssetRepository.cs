@@ -1,21 +1,17 @@
-﻿using Business.Interfaces.Repositories;
-using Business.Models;
+﻿using Business.Models;
+using Business.Services.UserAssetService;
+using System.Net;
 
 namespace Data.Repositories
 {
     public class UserAssetRepository : IUserAssetRepository
     {
-        public Task<UserAsset> CreateUserAsset( UserAsset userAsset )
+        public Task<HttpStatusCode> CreateUserAsset( UserAsset userAsset )
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> CreateUserPurchase( AssetPurchase purchase )
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<AssetPurchase>> GetPurchases( string ticker, Guid userId )
+        public Task<IEnumerable<Purchase>> GetPurchases( string ticker, Guid userId )
         {
             throw new NotImplementedException();
         }
@@ -25,7 +21,7 @@ namespace Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task UpdateUserAsset( UserAsset userAsset )
+        public Task<HttpStatusCode> UpdateUserAsset( UserAsset userAsset )
         {
             throw new NotImplementedException();
         }

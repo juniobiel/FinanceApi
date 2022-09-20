@@ -1,5 +1,5 @@
-﻿using Business.Interfaces.Repositories;
-using Business.Models;
+﻿using Business.Models;
+using Business.Services.AssetService;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Data.Repositories
@@ -7,17 +7,17 @@ namespace Data.Repositories
     [ExcludeFromCodeCoverage]
     public class AssetRepository : IAssetRepository
     {
-        public Task<Asset> CreateNewAsset( Asset asset )
+        public Task<AssetPrice> CreateNewAsset( AssetPrice asset )
         {
             throw new NotImplementedException();
         }
 
-        public Task<Asset> GetAsset( string ticker )
+        public Task<AssetPrice> GetAsset( string ticker )
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> UpdateAsset( Asset asset )
+        public Task<int> UpdateAsset( AssetPrice asset )
         {
             throw new NotImplementedException();
         }
