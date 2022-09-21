@@ -1,6 +1,6 @@
 ﻿using Business.Models;
 using Business.Services.AlphaVantage;
-using Business.Services.AssetService;
+using Business.Services.AssetPriceService;
 using Moq;
 using Moq.AutoMock;
 

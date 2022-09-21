@@ -1,6 +1,6 @@
 ﻿using Business.Interfaces;
 using Business.Models;
-using Business.Services.AssetService;
+using Business.Services.AssetPriceService;
 using System.Net;
 
 namespace Business.Services.UserAssetService

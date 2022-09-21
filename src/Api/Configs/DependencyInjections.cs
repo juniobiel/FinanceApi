@@ -2,7 +2,7 @@
 using Api.Extensions.User;
 using Business.Interfaces;
 using Business.Services.AlphaVantage;
-using Business.Services.AssetService;
+using Business.Services.AssetPriceService;
 using Business.Services.ServiceKey;
 using Business.Services.UserAssetService;
 using Data.Repositories;

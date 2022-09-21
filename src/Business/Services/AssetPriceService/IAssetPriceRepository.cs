@@ -1,6 +1,6 @@
 ﻿using Business.Models;
 
-namespace Business.Services.AssetService
+namespace Business.Services.AssetPriceService
 {
     public interface IAssetPriceRepository
     {

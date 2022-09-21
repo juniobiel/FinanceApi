@@ -2,21 +2,18 @@
 using Business.Models;
 using Business.Services.AlphaVantage;
 
-namespace Business.Services.AssetService
+namespace Business.Services.AssetPriceService
 {
     public class AssetPriceService : IAssetPriceService
     {
         readonly IAssetPriceRepository _repository;
         readonly IAlphaVantageService _alphaVantageService;
-        readonly IUser _appUser;
 
         public AssetPriceService( IAssetPriceRepository assetPriceRepository,
-            IAlphaVantageService alphaVantageService,
-            IUser appUser )
+            IAlphaVantageService alphaVantageService )
         {
             _repository = assetPriceRepository;
             _alphaVantageService = alphaVantageService;
-            _appUser = appUser;
         }
 
         public async Task<AssetPrice> GetOrCreateAssetPrice( string ticker )

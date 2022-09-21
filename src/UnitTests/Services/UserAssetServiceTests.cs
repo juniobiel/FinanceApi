@@ -1,5 +1,5 @@
 ﻿using Business.Models;
-using Business.Services.AssetService;
+using Business.Services.AssetPriceService;
 using Business.Services.UserAssetService;
 using Moq;
 using Moq.AutoMock;

@@ -1,6 +1,6 @@
-﻿using Business.Models;
+﻿using Business.Interfaces;
+using Business.Models;
 using Business.Services.PurchaseService;
-using Business.Services.UserAssetService;
 using Moq;
 using Moq.AutoMock;
 using System.Net;
@@ -82,6 +82,177 @@ namespace UnitTests.Services
             // Assert
             Assert.IsType<HttpStatusCode>(result);
             Assert.Equal(HttpStatusCode.OK, result);
+        }
+
+        [Fact(DisplayName = "Editar uma compra")]
+        [Trait("Editar", "Success")]
+        public async Task UpdatePurchase_PassingNewInformation_ReturnSucess()
+        {
+            // Arrange
+            Purchase purchase = new()
+            {
+                PurchaseId = Guid.NewGuid(),
+                CreatedByUserId = Guid.NewGuid(),
+                Assets = new List<Asset>
+                {
+                    new Asset
+                    {
+                        Ticker = "VGHF11",
+                        Quantity = 2,
+                        UnitPrice = 9.86
+                    }
+                },
+                TotalTaxes = 0
+            };
+
+            _mocker.GetMock<IPurchaseRepository>()
+                .Setup(x => x.UpdatePurchase(It.IsAny<Purchase>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+            _mocker.GetMock<IUser>()
+                .Setup(x => x.GetUserId())
+                .Returns(purchase.CreatedByUserId);
+
+            // Act
+            var result = await _service.UpdatePurchase(purchase);
+
+            // Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.OK, result);
+        }
+
+        [Fact(DisplayName = "Editar uma compra com usuário diferente")]
+        [Trait("Editar", "Fail")]
+        public async Task UpdatePurchase_UserNotAuthorized_ReturnSucess()
+        {
+            // Arrange
+            Purchase purchase = new()
+            {
+                PurchaseId = Guid.NewGuid(),
+                CreatedByUserId = Guid.NewGuid(),
+                Assets = new List<Asset>
+                {
+                    new Asset
+                    {
+                        Ticker = "VGHF11",
+                        Quantity = 2,
+                        UnitPrice = 9.86
+                    }
+                },
+                TotalTaxes = 0
+            };
+
+            _mocker.GetMock<IUser>()
+                .Setup(x => x.GetUserId())
+                .Returns(Guid.NewGuid());
+
+            // Act
+            var result = await _service.UpdatePurchase(purchase);
+
+            // Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.Forbidden, result);
+        }
+
+        [Fact(DisplayName = "Deletar uma compra")]
+        [Trait("Deletar", "Success")]
+        public async Task DeletePurchase_PassingPurchase_ReturnSucess()
+        {
+            // Arrange
+            Purchase purchase = new()
+            {
+                PurchaseId = Guid.NewGuid(),
+                CreatedByUserId = Guid.NewGuid(),
+                Assets = new List<Asset>
+                {
+                    new Asset
+                    {
+                        Ticker = "VGHF11",
+                        Quantity = 2,
+                        UnitPrice = 9.86
+                    }
+                },
+                TotalTaxes = 0
+            };
+
+            _mocker.GetMock<IPurchaseRepository>()
+                .Setup(x => x.DeletePurchase(It.IsAny<Purchase>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+            _mocker.GetMock<IUser>()
+                .Setup(x => x.GetUserId())
+                .Returns(purchase.CreatedByUserId);
+
+            // Act
+            var result = await _service.DeletePurchase(purchase);
+
+            // Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.OK, result);
+        }
+
+        [Fact(DisplayName = "Deletar uma compra com usuário diferente")]
+        [Trait("Deletar", "Fail")]
+        public async Task DeletePurchase_UserNotAuthorized_ReturnSucess()
+        {
+            // Arrange
+            Purchase purchase = new()
+            {
+                PurchaseId = Guid.NewGuid(),
+                CreatedByUserId = Guid.NewGuid(),
+                Assets = new List<Asset>
+                {
+                    new Asset
+                    {
+                        Ticker = "VGHF11",
+                        Quantity = 2,
+                        UnitPrice = 9.86
+                    }
+                },
+                TotalTaxes = 0
+            };
+
+            _mocker.GetMock<IUser>()
+                .Setup(x => x.GetUserId())
+                .Returns(Guid.NewGuid());
+
+            // Act
+            var result = await _service.DeletePurchase(purchase);
+
+            // Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.Forbidden, result);
+        }
+
+        [Fact(DisplayName = "Ler uma compra")]
+        [Trait("Ler", "Success")]
+        public async Task GetPurchase_PassingPurchaseId_ReturnPurchase()
+        {
+            //Arrange
+            Guid purchaseId = Guid.NewGuid();
+
+            _mocker.GetMock<IPurchaseRepository>()
+                .Setup(x => x.GetPurchase(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new Purchase
+                {
+                    PurchaseId = purchaseId,
+                    CreatedByUserId = Guid.NewGuid(),
+                    Assets = new List<Asset>
+                    {
+                        new Asset
+                        {
+                            Ticker = "VGHF11",
+                            Quantity = 2,
+                            UnitPrice = 9.86
+                        }
+                    },
+                    TotalTaxes = 0
+                });
+
+            //Act
+            var result = await _service.GetPurchase(purchaseId);
+
+            //Assert
+            Assert.IsType<Purchase>(result);
+            Assert.Equal(purchaseId, result.PurchaseId);
         }
     }
 }
