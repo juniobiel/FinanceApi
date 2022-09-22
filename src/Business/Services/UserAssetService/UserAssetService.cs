@@ -33,6 +33,10 @@ namespace Business.Services.UserAssetService
             return result;
         }
 
+        public Task<HttpStatusCode> RemoveToAssetUser( Asset asset )
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<UserAsset> SearchAsset( string ticker )
         {

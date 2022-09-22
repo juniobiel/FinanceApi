@@ -24,9 +24,8 @@ namespace Business.Services.PurchaseService
             purchase.CreatedByUserId = _appUser.GetUserId();
 
             foreach(Asset asset in purchase.Assets )
-            {
                 await _userAssetService.AddToUserAsset(asset);
-            }
+
 
             return await _repository.AddPurchase(purchase);
         }

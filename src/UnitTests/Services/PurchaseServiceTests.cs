@@ -25,7 +25,7 @@ namespace UnitTests.Services
             // Arrange
             Purchase purchase = new()
             {
-                PurchaseId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CreatedByUserId = Guid.NewGuid(),
                 Assets = new List<Asset>
                 {
@@ -58,7 +58,7 @@ namespace UnitTests.Services
             // Arrange
             Purchase purchase = new()
             {
-                PurchaseId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CreatedByUserId = Guid.NewGuid(),
                 Assets = new List<Asset>
                 {
@@ -91,7 +91,7 @@ namespace UnitTests.Services
             // Arrange
             Purchase purchase = new()
             {
-                PurchaseId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CreatedByUserId = Guid.NewGuid(),
                 Assets = new List<Asset>
                 {
@@ -122,12 +122,12 @@ namespace UnitTests.Services
 
         [Fact(DisplayName = "Editar uma compra com usuário diferente")]
         [Trait("Editar", "Fail")]
-        public async Task UpdatePurchase_UserNotAuthorized_ReturnSucess()
+        public async Task UpdatePurchase_UserNotAuthorized_ReturnForbidden()
         {
             // Arrange
             Purchase purchase = new()
             {
-                PurchaseId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CreatedByUserId = Guid.NewGuid(),
                 Assets = new List<Asset>
                 {
@@ -160,7 +160,7 @@ namespace UnitTests.Services
             // Arrange
             Purchase purchase = new()
             {
-                PurchaseId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CreatedByUserId = Guid.NewGuid(),
                 Assets = new List<Asset>
                 {
@@ -191,12 +191,12 @@ namespace UnitTests.Services
 
         [Fact(DisplayName = "Deletar uma compra com usuário diferente")]
         [Trait("Deletar", "Fail")]
-        public async Task DeletePurchase_UserNotAuthorized_ReturnSucess()
+        public async Task DeletePurchase_UserNotAuthorized_ReturnForbidden()
         {
             // Arrange
             Purchase purchase = new()
             {
-                PurchaseId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 CreatedByUserId = Guid.NewGuid(),
                 Assets = new List<Asset>
                 {
@@ -233,7 +233,7 @@ namespace UnitTests.Services
                 .Setup(x => x.GetPurchase(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .ReturnsAsync(new Purchase
                 {
-                    PurchaseId = purchaseId,
+                    Id = purchaseId,
                     CreatedByUserId = Guid.NewGuid(),
                     Assets = new List<Asset>
                     {
@@ -252,7 +252,7 @@ namespace UnitTests.Services
 
             //Assert
             Assert.IsType<Purchase>(result);
-            Assert.Equal(purchaseId, result.PurchaseId);
+            Assert.Equal(purchaseId, result.Id);
         }
     }
 }
