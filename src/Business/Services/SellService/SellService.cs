@@ -50,6 +50,9 @@ namespace Business.Services.SellService
             if (!IsValidUser(sell.CreatedByUserId))
                 return HttpStatusCode.Forbidden;
 
+            foreach (Asset asset in sell.Assets)
+                await _userAssetService.RevertAssetSell(asset);
+
             return await _repository.DeleteSell(sell);
         }
 

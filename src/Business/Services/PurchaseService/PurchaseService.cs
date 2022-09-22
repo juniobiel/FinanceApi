@@ -48,6 +48,9 @@ namespace Business.Services.PurchaseService
             if (!IsValidUser(purchase.CreatedByUserId))
                 return HttpStatusCode.Forbidden;
 
+            foreach(Asset asset in purchase.Assets)
+                await _userAssetService.RevertAssetPurchase(asset);
+
             return await _repository.DeletePurchase(purchase);
         }
 

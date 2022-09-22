@@ -1,6 +1,5 @@
 ﻿using Business.Interfaces;
 using Business.Models;
-using Business.Services.AssetPriceService;
 using System.Net;
 
 namespace Business.Services.UserAssetService
@@ -9,15 +8,15 @@ namespace Business.Services.UserAssetService
     {
         readonly IUserAssetRepository _repository;
         readonly IUser _appUser;
-        readonly IAssetPriceService _priceService;
+        //readonly IAssetPriceService _priceService;
 
         public UserAssetService( IUserAssetRepository userAssetRepository,
-            IUser appUser,
-            IAssetPriceService priceService )
+            IUser appUser)
+            //IAssetPriceService priceService )
         {
             _repository = userAssetRepository;
             _appUser = appUser;
-            _priceService = priceService;
+            //_priceService = priceService;
         }
 
         public async Task<HttpStatusCode> AddToUserAsset( Asset asset )
@@ -33,7 +32,53 @@ namespace Business.Services.UserAssetService
             return result;
         }
 
-        public Task<HttpStatusCode> RemoveToAssetUser( Asset asset )
+        public async Task<HttpStatusCode> RemoveToAssetUser( Asset asset )
+        {
+            var userAsset = await SearchAsset(asset.Ticker);
+
+            if(userAsset == null)
+                return HttpStatusCode.BadRequest;
+
+            if(asset.Quantity > userAsset.TotalQuantity)
+                return HttpStatusCode.Conflict;
+
+            if(asset.Quantity == userAsset.TotalQuantity)
+            {
+                userAsset.TotalQuantity = 0;
+                userAsset.IsActive = false;
+            }
+            else if (asset.Quantity < userAsset.TotalQuantity)
+            {
+                userAsset.TotalQuantity -= asset.Quantity;
+            }
+
+            userAsset.UpdatedAt = DateTime.Now;
+            userAsset.UpdatedByUserId = _appUser.GetUserId();
+
+            return await _repository.UpdateUserAsset(userAsset);
+        }
+
+        public async Task<HttpStatusCode> RevertAssetPurchase( Asset asset )
+        {
+            var userAsset = await SearchAsset(asset.Ticker);
+
+            if (userAsset == null)
+                return HttpStatusCode.BadRequest;
+
+            userAsset.TotalQuantity -= asset.Quantity;
+            if(userAsset.TotalQuantity <= 0)
+            {
+                userAsset.TotalQuantity = 0;
+                userAsset.IsActive = false;
+            }
+
+            userAsset.UpdatedAt = DateTime.Now;
+            userAsset.UpdatedByUserId = _appUser.GetUserId();
+
+            return await _repository.UpdateUserAsset(userAsset);
+        }
+
+        public Task<HttpStatusCode> RevertAssetSell( Asset asset )
         {
             throw new NotImplementedException();
         }
@@ -45,14 +90,13 @@ namespace Business.Services.UserAssetService
 
         private async Task<HttpStatusCode> CreateUserAsset( Asset asset )
         {
-            var assetPrice = await _priceService.GetOrCreateAssetPrice(asset.Ticker);
+            //var assetPrice = await _priceService.GetOrCreateAssetPrice(asset.Ticker);
 
             UserAsset userAsset = new()
             {
-                AssetPriceId = assetPrice.Id,
                 Ticker = asset.Ticker,
                 TotalQuantity = asset.Quantity,
-                MediumPrice = asset.UnitPrice,
+                IsActive = true,
                 CreatedAt = DateTime.Now,
                 CreatedByUserId = _appUser.GetUserId()
             };
@@ -62,6 +106,7 @@ namespace Business.Services.UserAssetService
 
         private async Task<HttpStatusCode> IncreaseUserAsset(UserAsset userAsset, Asset asset)
         {
+            userAsset.IsActive = true;
             userAsset.TotalQuantity += asset.Quantity;
             userAsset.UpdatedAt = DateTime.Now;
             userAsset.UpdatedByUserId = _appUser.GetUserId();

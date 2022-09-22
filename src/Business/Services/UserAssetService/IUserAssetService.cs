@@ -8,5 +8,7 @@ namespace Business.Services.UserAssetService
         Task<HttpStatusCode> AddToUserAsset( Asset asset );
         Task<HttpStatusCode> RemoveToAssetUser( Asset asset );
         Task<UserAsset> SearchAsset( string ticker );
+        Task<HttpStatusCode> RevertAssetPurchase(Asset asset );
+        Task<HttpStatusCode> RevertAssetSell(Asset asset );
     }
 }
