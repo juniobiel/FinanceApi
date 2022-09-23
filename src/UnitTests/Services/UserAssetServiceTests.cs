@@ -146,6 +146,30 @@ namespace UnitTests.Services
             Assert.Equal(HttpStatusCode.OK, result);
         }
 
+        [Fact(DisplayName = "Quando a busca retorna nulo na remoção")]
+        [Trait("Remover Asset", "Fail")]
+        public async Task RemoveToUser_WhenSearchReturnsNull_ReturnBadRequest()
+        {
+            //Arrange
+            Asset asset = new()
+            {
+                Ticker = "PETR4",
+                UnitPrice = 5.50,
+                Quantity = 5
+            };
+
+            _mocker.GetMock<IUserAssetRepository>()
+                .Setup(x => x.UpdateUserAsset(It.IsAny<UserAsset>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+
+            //Act
+            var result = await _service.RemoveToAssetUser(asset);
+
+            //Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.BadRequest, result);
+        }
+
         [Fact(DisplayName = "Remover mais assets do que o usuário possui")]
         [Trait("Retirar Todos", "Fail")]
         public async Task RemoveToUser_WithAQuantityGreaterThanTotalQuantity_ReturnConflict()
@@ -215,6 +239,124 @@ namespace UnitTests.Services
             //Assert
             Assert.IsType<HttpStatusCode>(result);
             Assert.Equal(HttpStatusCode.OK, result);
+        }
+
+        [Fact(DisplayName = "Reverter uma compra quando o asset não é encontrado")]
+        [Trait("Reverter compra", "Fail")]
+        public async Task RevertAssetPurchase_WhenSearchReturnsNull_ReturnBadRequest()
+        {
+            //Arrange
+            Asset asset = new()
+            {
+                Quantity = 5,
+                Ticker = "PETR4",
+                UnitPrice = 5.50
+            };
+            _mocker.GetMock<IUserAssetRepository>()
+                .Setup(x => x.UpdateUserAsset(It.IsAny<UserAsset>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+
+            //Act
+            var result = await _service.RevertAssetPurchase(asset);
+
+            //Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.BadRequest, result);
+        }
+
+        [Fact(DisplayName = "Reverter uma compra quando o asset não existia")]
+        [Trait("Reverter compra", "success")]
+        public async Task RevertAssetPurchase_WhenAssetDidNotExists_ReturnBadRequest()
+        {
+            //Arrange
+            Asset asset = new()
+            {
+                Quantity = 10,
+                Ticker = "PETR4",
+                UnitPrice = 5.50
+            };
+            UserAsset userAsset = new()
+            {
+                UserAssetId = Guid.NewGuid(),
+                Ticker = "PETR4",
+                IsActive = true,
+                CreatedAt = DateTime.Now.AddDays(-5),
+                CreatedByUserId = Guid.NewGuid(),
+                TotalQuantity = 10,
+            };
+
+            _mocker.GetMock<IUserAssetRepository>()
+                .Setup(x => x.GetUserAsset(It.IsAny<string>(), It.IsAny<Guid>()))
+                .ReturnsAsync(userAsset);
+            _mocker.GetMock<IUserAssetRepository>()
+                .Setup(x => x.UpdateUserAsset(It.IsAny<UserAsset>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+
+            //Act
+            var result = await _service.RevertAssetPurchase(asset);
+
+            //Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.OK, result);
+        }
+
+        [Fact(DisplayName = "Reverter uma venda")]
+        [Trait("Reverter venda", "Success")]
+        public async Task RevertAssetSell_WithAsset_ReturnSucess()
+        {
+            //Arrange
+            Asset asset = new()
+            {
+                Quantity = 5,
+                Ticker = "PETR4",
+                UnitPrice = 5.50
+            };
+            UserAsset userAsset = new()
+            {
+                UserAssetId = Guid.NewGuid(),
+                Ticker = "PETR4",
+                IsActive = true,
+                CreatedAt = DateTime.Now.AddDays(-5),
+                CreatedByUserId = Guid.NewGuid(),
+                TotalQuantity = 10,
+            };
+
+            _mocker.GetMock<IUserAssetRepository>()
+                .Setup(x => x.GetUserAsset(It.IsAny<string>(), It.IsAny<Guid>()))
+                .ReturnsAsync(userAsset);
+            _mocker.GetMock<IUserAssetRepository>()
+                .Setup(x => x.UpdateUserAsset(It.IsAny<UserAsset>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+
+            //Act
+            var result = await _service.RevertAssetSell(asset);
+
+            //Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.OK, result);
+        }
+
+        [Fact(DisplayName = "Reverter uma venda quando o asset não é encontrado")]
+        [Trait("Reverter venda", "Fail")]
+        public async Task RevertAssetSell_WhenSearchReturnsNull_ReturnBadRequest()
+        {
+            //Arrange
+            Asset asset = new()
+            {
+                Quantity = 5,
+                Ticker = "PETR4",
+                UnitPrice = 5.50
+            };
+            _mocker.GetMock<IUserAssetRepository>()
+                .Setup(x => x.UpdateUserAsset(It.IsAny<UserAsset>()))
+                .ReturnsAsync(HttpStatusCode.OK);
+
+            //Act
+            var result = await _service.RevertAssetSell(asset);
+
+            //Assert
+            Assert.IsType<HttpStatusCode>(result);
+            Assert.Equal(HttpStatusCode.BadRequest, result);
         }
     }
 }

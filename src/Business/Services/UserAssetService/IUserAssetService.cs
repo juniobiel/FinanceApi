@@ -10,5 +10,6 @@ namespace Business.Services.UserAssetService
         Task<UserAsset> SearchAsset( string ticker );
         Task<HttpStatusCode> RevertAssetPurchase(Asset asset );
         Task<HttpStatusCode> RevertAssetSell(Asset asset );
+        Task<double> GetMediumPrice( UserAsset userAsset );
     }
 }

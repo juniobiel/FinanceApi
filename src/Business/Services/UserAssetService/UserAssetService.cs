@@ -8,15 +8,12 @@ namespace Business.Services.UserAssetService
     {
         readonly IUserAssetRepository _repository;
         readonly IUser _appUser;
-        //readonly IAssetPriceService _priceService;
 
         public UserAssetService( IUserAssetRepository userAssetRepository,
             IUser appUser)
-            //IAssetPriceService priceService )
         {
             _repository = userAssetRepository;
             _appUser = appUser;
-            //_priceService = priceService;
         }
 
         public async Task<HttpStatusCode> AddToUserAsset( Asset asset )
@@ -78,9 +75,20 @@ namespace Business.Services.UserAssetService
             return await _repository.UpdateUserAsset(userAsset);
         }
 
-        public Task<HttpStatusCode> RevertAssetSell( Asset asset )
+        public async Task<HttpStatusCode> RevertAssetSell( Asset asset )
         {
-            throw new NotImplementedException();
+            var userAsset = await SearchAsset(asset.Ticker);
+
+            if (userAsset == null)
+                return HttpStatusCode.BadRequest;
+
+            userAsset.TotalQuantity += asset.Quantity;
+            userAsset.IsActive = true;
+            userAsset.UpdatedAt = DateTime.Now;
+            userAsset.UpdatedByUserId = _appUser.GetUserId();
+            
+
+            return await _repository.UpdateUserAsset(userAsset);
         }
 
         public async Task<UserAsset> SearchAsset( string ticker )
@@ -88,9 +96,36 @@ namespace Business.Services.UserAssetService
             return await _repository.GetUserAsset(ticker, _appUser.GetUserId());
         }
 
+        public async Task<double> GetMediumPrice( UserAsset userAsset )
+        {
+            if(!userAsset.IsActive)
+                return 0;
+
+            var result = await _repository.Search(x => x.CreatedByUserId == _appUser.GetUserId());
+            var purchases = result.Where(x => x.Assets.All(y => y.Ticker == userAsset.Ticker)).ToList();
+            
+            double mediumPrice = 0;
+
+            foreach (var purchase in purchases)
+            {
+                if (purchase.Assets.Count() > 1)
+                {
+                    foreach (var asset in purchase.Assets)
+                    {
+                        mediumPrice = purchase.Assets.First().TotalPaid + purchase.TotalTaxes;
+                    }
+                }
+                else
+                    mediumPrice = purchase.Assets.First().TotalPaid + purchase.TotalTaxes;
+            }
+
+
+            return mediumPrice /= userAsset.TotalQuantity;
+
+        }
+
         private async Task<HttpStatusCode> CreateUserAsset( Asset asset )
         {
-            //var assetPrice = await _priceService.GetOrCreateAssetPrice(asset.Ticker);
 
             UserAsset userAsset = new()
             {
@@ -98,7 +133,7 @@ namespace Business.Services.UserAssetService
                 TotalQuantity = asset.Quantity,
                 IsActive = true,
                 CreatedAt = DateTime.Now,
-                CreatedByUserId = _appUser.GetUserId()
+                CreatedByUserId = _appUser.GetUserId(),
             };
 
             return await _repository.CreateUserAsset(userAsset);
