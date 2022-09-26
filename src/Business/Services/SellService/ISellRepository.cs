@@ -9,5 +9,6 @@ namespace Business.Services.SellService
         Task<HttpStatusCode> UpdateSell( Sell sell );
         Task<HttpStatusCode> DeleteSell( Sell sell );
         Task<Sell> GetSell( Guid sellId, Guid userId );
+        Task<Sell> GetLastSell();
     }
 }

@@ -9,8 +9,6 @@ namespace Business.Services.UserAssetService
         Task<HttpStatusCode> CreateUserAsset(UserAsset userAsset);
         Task<HttpStatusCode> UpdateUserAsset(UserAsset userAsset);
         Task<UserAsset> GetUserAsset( string ticker, Guid userId );
-        Task<IEnumerable<Purchase>> GetPurchases(string ticker, Guid userId);
-        Task<IEnumerable<Purchase>> Search(Expression<Func<Purchase, bool>> predicate);
 
     }
 }

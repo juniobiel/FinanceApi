@@ -1,8 +1,11 @@
 ﻿using Business.Models;
 using Business.Services.AssetPriceService;
+using Business.Services.PurchaseService;
+using Business.Services.SellService;
 using Business.Services.UserAssetService;
 using Moq;
 using Moq.AutoMock;
+using System.Linq.Expressions;
 using System.Net;
 
 namespace UnitTests.Services
@@ -265,7 +268,7 @@ namespace UnitTests.Services
         }
 
         [Fact(DisplayName = "Reverter uma compra quando o asset não existia")]
-        [Trait("Reverter compra", "success")]
+        [Trait("Reverter compra", "Success")]
         public async Task RevertAssetPurchase_WhenAssetDidNotExists_ReturnBadRequest()
         {
             //Arrange
@@ -357,6 +360,143 @@ namespace UnitTests.Services
             //Assert
             Assert.IsType<HttpStatusCode>(result);
             Assert.Equal(HttpStatusCode.BadRequest, result);
+        }
+
+        [Fact(DisplayName = "Pegar o preço médio quando houve mais de uma compra")]
+        [Trait("Preco Medio", "Sucess")]
+        public async Task GetMediumPrice_WhenHasAPurchaseListWithAssetList_ReturnDouble()
+        {
+            //Arrange
+            UserAsset userAsset = new()
+            {
+                IsActive = true,
+                Ticker = "PETR4",
+                TotalQuantity = 5,
+                UserAssetId = Guid.NewGuid(),
+            };
+            List<Purchase> purchases = new ()
+            {
+                new Purchase
+                {
+                    Assets = new List<Asset>
+                    {
+                        new Asset
+                        {
+                            Ticker = "PETR4",
+                            Quantity = 5,
+                            UnitPrice = 5
+                        },
+                        new Asset
+                        {
+                            Ticker = "PGBL11",
+                            Quantity = 4,
+                            UnitPrice = 2
+                        }
+                    }
+                },
+                new Purchase
+                {
+                    Assets = new List<Asset>
+                    {
+                        new Asset
+                        {
+                            Ticker = "MALL11",
+                            Quantity = 5,
+                            UnitPrice = 5
+                        },
+                        new Asset
+                        {
+                            Ticker = "PGBL11",
+                            Quantity = 4,
+                            UnitPrice = 2
+                        }
+                    }
+                }
+            };
+
+            _mocker.GetMock<IPurchaseRepository>()
+                .Setup(x => x.GetPurchases(It.IsAny<string>(), It.IsAny<Guid>()))
+                .ReturnsAsync(purchases);
+
+            //Act
+            var result = await _service.GetMediumPrice(userAsset);
+
+            //Assert
+            Assert.Equal(5, result);
+        }
+
+        [Fact(DisplayName = "Pegar o preço médio quando houve uma venda")]
+        [Trait("Preco Medio", "Sucess")]
+        public async Task GetMediumPrice_WhenHasALastSell_ReturnDouble()
+        {
+            //Arrange
+            UserAsset userAsset = new()
+            {
+                UserAssetId = Guid.NewGuid(),
+                LastSell = DateTime.Now.AddDays(-94),
+                IsActive = true,
+                Ticker = "PETR4",
+                MediumPrice = 5,
+                TotalQuantity = 15
+            };
+            List<Purchase> purchases = new()
+            {
+                new Purchase
+                {
+                    PurchaseDate = DateTime.Now,
+                    Assets = new List<Asset>
+                    {
+                        new Asset
+                        {
+                            Ticker = "PETR4",
+                            Quantity = 10,
+                            UnitPrice = 10
+                        },
+                        new Asset
+                        {
+                            Ticker = "PGBL11",
+                            Quantity = 4,
+                            UnitPrice = 2
+                        }
+                    }
+                },
+                new Purchase
+                {
+                    PurchaseDate = DateTime.Now.AddDays(-100),
+                    Assets = new List<Asset>
+                    {
+                        new Asset
+                        {
+                            Ticker = "MALL11",
+                            Quantity = 5,
+                            UnitPrice = 5
+                        },
+                        new Asset
+                        {
+                            Ticker = "PGBL11",
+                            Quantity = 4,
+                            UnitPrice = 2
+                        }
+                    }
+                }
+            };
+            Sell sell = new()
+            {
+                MediumPrice = 5,
+            };
+
+            _mocker.GetMock<IPurchaseRepository>()
+                .Setup(x => x.GetPurchases(It.IsAny<string>(), It.IsAny<Guid>()))
+                .ReturnsAsync(purchases);
+            _mocker.GetMock<ISellRepository>()
+                .Setup(x => x.GetLastSell())
+                .ReturnsAsync(sell);
+
+            //Act
+            var result = await _service.GetMediumPrice(userAsset);
+
+            //Assert
+            Assert.Equal(7, result);
         }
     }
 }

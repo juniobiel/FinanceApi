@@ -9,5 +9,6 @@ namespace Business.Services.PurchaseService
         Task<HttpStatusCode> AddPurchase( Purchase purchase );
         Task<HttpStatusCode> UpdatePurchase( Purchase purchase );
         Task<HttpStatusCode> DeletePurchase( Purchase purchase );
+        Task<IEnumerable<Purchase>> GetPurchases( string ticker, Guid userId );
     }
 }

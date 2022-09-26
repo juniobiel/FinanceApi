@@ -1,5 +1,7 @@
 ﻿using Business.Interfaces;
 using Business.Models;
+using Business.Services.PurchaseService;
+using Business.Services.SellService;
 using System.Net;
 
 namespace Business.Services.UserAssetService
@@ -7,13 +9,19 @@ namespace Business.Services.UserAssetService
     public class UserAssetService : IUserAssetService
     {
         readonly IUserAssetRepository _repository;
+        readonly IPurchaseRepository _purchaseRepository;
+        readonly ISellRepository _sellRepository;
         readonly IUser _appUser;
 
         public UserAssetService( IUserAssetRepository userAssetRepository,
-            IUser appUser)
+            IUser appUser,
+            IPurchaseRepository purchaseRepository,
+            ISellRepository sellRepository )
         {
             _repository = userAssetRepository;
             _appUser = appUser;
+            _purchaseRepository = purchaseRepository;
+            _sellRepository = sellRepository;
         }
 
         public async Task<HttpStatusCode> AddToUserAsset( Asset asset )
@@ -96,32 +104,46 @@ namespace Business.Services.UserAssetService
             return await _repository.GetUserAsset(ticker, _appUser.GetUserId());
         }
 
+        public async Task<HttpStatusCode> UpdateMediumPrice(string ticker)
+        {
+            var user = _appUser.GetUserId();
+            var userAsset = await _repository.GetUserAsset(ticker, user);
+
+            //TODO: Aplicar lógica para atualizar o LastMediumPrice
+            userAsset.MediumPrice = await GetMediumPrice(userAsset);
+            userAsset.UpdatedAt = DateTime.Now;
+            userAsset.UpdatedByUserId = _appUser.GetUserId();
+
+            return await _repository.UpdateUserAsset(userAsset);
+        }
+
         public async Task<double> GetMediumPrice( UserAsset userAsset )
         {
+            double mediumPrice = 0;
+            
             if(!userAsset.IsActive)
                 return 0;
 
-            var result = await _repository.Search(x => x.CreatedByUserId == _appUser.GetUserId());
-            var purchases = result.Where(x => x.Assets.All(y => y.Ticker == userAsset.Ticker)).ToList();
-            
-            double mediumPrice = 0;
-
-            foreach (var purchase in purchases)
+            var result = await _purchaseRepository.GetPurchases(userAsset.Ticker, _appUser.GetUserId());
+            if(userAsset.LastSell != null)
             {
-                if (purchase.Assets.Count() > 1)
-                {
-                    foreach (var asset in purchase.Assets)
-                    {
-                        mediumPrice = purchase.Assets.First().TotalPaid + purchase.TotalTaxes;
-                    }
-                }
-                else
-                    mediumPrice = purchase.Assets.First().TotalPaid + purchase.TotalTaxes;
+                result = result.Where(x => x.PurchaseDate >= userAsset.LastSell).ToList();
+                var sell = await _sellRepository.GetLastSell();
+                mediumPrice = sell.MediumPrice;
             }
 
+            foreach (var purchase in result)
+            {
+                if (purchase.Assets.Any())
+                {
+                    foreach (var asset in purchase.Assets.Where(x => x.Ticker == userAsset.Ticker))
+                    {
+                        mediumPrice += asset.TotalPaid + purchase.TotalTaxes;
+                    }
+                }
+            }
 
             return mediumPrice /= userAsset.TotalQuantity;
-
         }
 
         private async Task<HttpStatusCode> CreateUserAsset( Asset asset )

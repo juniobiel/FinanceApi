@@ -11,6 +11,8 @@ namespace Business.Models
         public string Ticker { get; set; }
         public int TotalQuantity { get; set; }
         public bool IsActive { get; set; }
+        public DateTime? LastSell { get; set; }
+        public double? MediumPrice { get; set; }
         public Guid CreatedByUserId { get; set; }
         public DateTime CreatedAt { get; set; }
         public Guid UpdatedByUserId { get; set; }
