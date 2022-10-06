@@ -1,5 +1,4 @@
-﻿using Business.Interfaces;
-using Business.Models;
+﻿using Business.Models;
 using Business.Services.AlphaVantage;
 
 namespace Business.Services.AssetPriceService
@@ -23,7 +22,7 @@ namespace Business.Services.AssetPriceService
             return assetPrice;
         }
 
-        private async Task<AssetPrice> SearchAssetPrice(string ticker)
+        private async Task<AssetPrice> SearchAssetPrice( string ticker )
         {
             return await _repository.GetAssetPrice(ticker);
         }

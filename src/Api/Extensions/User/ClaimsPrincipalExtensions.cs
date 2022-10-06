@@ -6,14 +6,14 @@ namespace Api.Extensions.User
     [ExcludeFromCodeCoverage]
     public static class ClaimsPrincipalExtensions
     {
-        public static string GetUserId(this ClaimsPrincipal principal)
+        public static string GetUserId( this ClaimsPrincipal principal )
         {
-            if(principal == null)
+            if (principal == null)
             {
                 throw new ArgumentException("Not found", nameof(principal));
             }
-            
-            var claim = principal.FindFirst(ClaimTypes.NameIdentifier); 
+
+            var claim = principal.FindFirst(ClaimTypes.NameIdentifier);
             return claim?.Value;
         }
 
@@ -21,7 +21,7 @@ namespace Api.Extensions.User
         {
             if (principal == null)
             {
-                throw new ArgumentException("Not found" , nameof(principal));
+                throw new ArgumentException("Not found", nameof(principal));
             }
 
             var claim = principal.FindFirst(ClaimTypes.Email);

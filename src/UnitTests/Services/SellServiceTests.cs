@@ -35,7 +35,7 @@ namespace UnitTests.Services
                     }
                 },
                 TotalTaxes = 0,
-                SellDate = DateTime.Now.AddDays(-8)               
+                SellDate = DateTime.Now.AddDays(-8)
             };
 
             _mocker.GetMock<ISellRepository>()

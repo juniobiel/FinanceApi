@@ -13,11 +13,11 @@ namespace Api.Controllers
         protected Guid UserId { get; set; }
         protected bool UserAuthenticated { get; set; }
 
-        public MainController(IUser appUser)
+        public MainController( IUser appUser )
         {
             AppUser = appUser;
 
-            if(AppUser.IsAuthenticated())
+            if (AppUser.IsAuthenticated())
             {
                 UserId = AppUser.GetUserId();
                 UserAuthenticated = true;

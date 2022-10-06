@@ -41,7 +41,7 @@ namespace UnitTests.Services
 
             // Assert
             Assert.IsType<AssetPrice>(result);
-            Assert.Equal(15.1, result.LastPrice );
+            Assert.Equal(15.1, result.LastPrice);
         }
 
         [Fact(DisplayName = "Capturar a instancia de AssetPrice")]

@@ -46,7 +46,7 @@ namespace Api.Controllers
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 
-            if(result.Errors.Any())
+            if (result.Errors.Any())
             {
                 var errors = new List<string>();
                 foreach (var error in result.Errors)
@@ -79,7 +79,7 @@ namespace Api.Controllers
             var result = await _signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
 
             if (result.IsLockedOut)
-                return StatusCode( StatusCodes.Status423Locked,"Usuário temporariamente bloqueado por tentativas inválidas");
+                return StatusCode(StatusCodes.Status423Locked, "Usuário temporariamente bloqueado por tentativas inválidas");
 
             if (!result.Succeeded)
                 return BadRequest("Não foi possível logar");
@@ -145,7 +145,10 @@ namespace Api.Controllers
             return response;
         }
 
-        private static long ToUnixEpochDate( DateTime date ) => (long)Math.Round(
+        private static long ToUnixEpochDate( DateTime date )
+        {
+            return (long)Math.Round(
             (date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+        }
     }
 }

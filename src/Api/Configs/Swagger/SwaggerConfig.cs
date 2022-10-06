@@ -37,7 +37,7 @@ namespace Api.Configs.Swagger
                         },
                         Array.Empty<string>()
                     }
-                }) ;
+                });
             });
 
             return services;

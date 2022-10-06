@@ -41,13 +41,13 @@ namespace Business.Services.UserAssetService
         {
             var userAsset = await SearchAsset(asset.Ticker);
 
-            if(userAsset == null)
+            if (userAsset == null)
                 return HttpStatusCode.BadRequest;
 
-            if(asset.Quantity > userAsset.TotalQuantity)
+            if (asset.Quantity > userAsset.TotalQuantity)
                 return HttpStatusCode.Conflict;
 
-            if(asset.Quantity == userAsset.TotalQuantity)
+            if (asset.Quantity == userAsset.TotalQuantity)
             {
                 userAsset.TotalQuantity = 0;
                 userAsset.IsActive = false;
@@ -71,7 +71,7 @@ namespace Business.Services.UserAssetService
                 return HttpStatusCode.BadRequest;
 
             userAsset.TotalQuantity -= asset.Quantity;
-            if(userAsset.TotalQuantity <= 0)
+            if (userAsset.TotalQuantity <= 0)
             {
                 userAsset.TotalQuantity = 0;
                 userAsset.IsActive = false;
@@ -94,7 +94,7 @@ namespace Business.Services.UserAssetService
             userAsset.IsActive = true;
             userAsset.UpdatedAt = DateTime.Now;
             userAsset.UpdatedByUserId = _appUser.GetUserId();
-            
+
 
             return await _repository.UpdateUserAsset(userAsset);
         }
@@ -104,7 +104,7 @@ namespace Business.Services.UserAssetService
             return await _repository.GetUserAsset(ticker, _appUser.GetUserId());
         }
 
-        public async Task<HttpStatusCode> UpdateMediumPrice(string ticker)
+        public async Task<HttpStatusCode> UpdateMediumPrice( string ticker )
         {
             var user = _appUser.GetUserId();
             var userAsset = await _repository.GetUserAsset(ticker, user);
@@ -120,12 +120,12 @@ namespace Business.Services.UserAssetService
         public async Task<double> GetMediumPrice( UserAsset userAsset )
         {
             double mediumPrice = 0;
-            
-            if(!userAsset.IsActive)
+
+            if (!userAsset.IsActive)
                 return 0;
 
             var result = await _purchaseRepository.GetPurchases(userAsset.Ticker, _appUser.GetUserId());
-            if(userAsset.LastSell != null)
+            if (userAsset.LastSell != null)
             {
                 result = result.Where(x => x.PurchaseDate >= userAsset.LastSell).ToList();
                 var sell = await _sellRepository.GetLastSell();
@@ -161,7 +161,7 @@ namespace Business.Services.UserAssetService
             return await _repository.CreateUserAsset(userAsset);
         }
 
-        private async Task<HttpStatusCode> IncreaseUserAsset(UserAsset userAsset, Asset asset)
+        private async Task<HttpStatusCode> IncreaseUserAsset( UserAsset userAsset, Asset asset )
         {
             userAsset.IsActive = true;
             userAsset.TotalQuantity += asset.Quantity;

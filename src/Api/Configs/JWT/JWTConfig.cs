@@ -8,7 +8,7 @@ namespace Api.Configs.JWT
     [ExcludeFromCodeCoverage]
     public static class JwtConfig
     {
-        public static IServiceCollection AddJWTConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddJWTConfiguration( this IServiceCollection services, IConfiguration configuration )
         {
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);

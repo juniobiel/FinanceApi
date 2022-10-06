@@ -9,7 +9,7 @@ namespace Api.Configs
     [ExcludeFromCodeCoverage]
     public static class IdentityConfig
     {
-        public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddIdentityConfiguration( this IServiceCollection services, string connectionString )
         {
             services.AddDbContext<ApiDbContext>(options => options.UseNpgsql(connectionString));
             services.AddIdentity<IdentityUser, IdentityRole>()

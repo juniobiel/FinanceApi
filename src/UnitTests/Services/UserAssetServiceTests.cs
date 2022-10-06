@@ -5,7 +5,6 @@ using Business.Services.SellService;
 using Business.Services.UserAssetService;
 using Moq;
 using Moq.AutoMock;
-using System.Linq.Expressions;
 using System.Net;
 
 namespace UnitTests.Services
@@ -374,7 +373,7 @@ namespace UnitTests.Services
                 TotalQuantity = 5,
                 UserAssetId = Guid.NewGuid(),
             };
-            List<Purchase> purchases = new ()
+            List<Purchase> purchases = new()
             {
                 new Purchase
                 {

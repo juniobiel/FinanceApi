@@ -21,7 +21,10 @@ namespace Business.Services.SellService
         }
 
 
-        public async Task<Sell> GetSell( Guid sellId ) => await _repository.GetSell(sellId, _appUser.GetUserId());
+        public async Task<Sell> GetSell( Guid sellId )
+        {
+            return await _repository.GetSell(sellId, _appUser.GetUserId());
+        }
 
         public async Task<HttpStatusCode> NewSell( Sell sell )
         {

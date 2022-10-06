@@ -2,14 +2,13 @@
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using System.Diagnostics.CodeAnalysis;
 
-#nullable disable
 
 namespace Api.Data.Migrations
 {
     [ExcludeFromCodeCoverage]
     public partial class Identity : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
+        protected override void Up( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
@@ -194,7 +193,7 @@ namespace Api.Data.Migrations
                 unique: true);
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
+        protected override void Down( MigrationBuilder migrationBuilder )
         {
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");

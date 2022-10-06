@@ -54,11 +54,11 @@ namespace UnitTests.Controllers
                 Password = "teste123456",
                 ConfirmPassword = "teste123456"
             };
-            
+
 
             _mocker.GetMock<UserManager<IdentityUser>>()
                 .Setup(x => x.FindByEmailAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult((IdentityUser) null));
+                .Returns(Task.FromResult((IdentityUser)null));
             _mocker.GetMock<UserManager<IdentityUser>>()
                 .Setup(x => x.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
                 .ReturnsAsync(IdentityResult.Success);

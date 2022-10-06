@@ -11,7 +11,10 @@ namespace Api.Configs.Swagger
     {
         readonly IApiVersionDescriptionProvider provider;
 
-        public ConfigureSwaggerOptions( IApiVersionDescriptionProvider provider ) => this.provider = provider;
+        public ConfigureSwaggerOptions( IApiVersionDescriptionProvider provider )
+        {
+            this.provider = provider;
+        }
 
         public void Configure( SwaggerGenOptions options )
         {

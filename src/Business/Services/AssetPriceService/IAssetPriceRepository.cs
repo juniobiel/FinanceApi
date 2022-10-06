@@ -5,6 +5,6 @@ namespace Business.Services.AssetPriceService
     public interface IAssetPriceRepository
     {
         Task<AssetPrice> CreateAssetPrice( AssetPrice asset );
-        Task<AssetPrice> GetAssetPrice(string ticker);
+        Task<AssetPrice> GetAssetPrice( string ticker );
     }
 }

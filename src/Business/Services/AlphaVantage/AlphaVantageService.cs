@@ -36,7 +36,7 @@ namespace Business.Services.AlphaVantage
             return json;
         }
 
-        public async Task<double> GetAssetLastPrice(string ticker)
+        public async Task<double> GetAssetLastPrice( string ticker )
         {
             var result = await GetAssetHistory(ticker);
 

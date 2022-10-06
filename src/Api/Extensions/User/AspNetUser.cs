@@ -8,7 +8,7 @@ namespace Api.Extensions.User
     {
         private readonly IHttpContextAccessor _accessor;
 
-        public AspNetUser( IHttpContextAccessor accessor)
+        public AspNetUser( IHttpContextAccessor accessor )
         {
             _accessor = accessor;
         }

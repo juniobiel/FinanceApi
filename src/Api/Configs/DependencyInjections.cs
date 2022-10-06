@@ -15,7 +15,7 @@ namespace Api.Configs
     [ExcludeFromCodeCoverage]
     public static class DependencyInjections
     {
-        public static IServiceCollection AddDependenciesInjections(this IServiceCollection services)
+        public static IServiceCollection AddDependenciesInjections( this IServiceCollection services )
         {
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

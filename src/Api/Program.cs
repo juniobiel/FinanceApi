@@ -1,6 +1,6 @@
-using Api.Configs.Swagger;
-using Api.Configs.JWT;
 using Api.Configs;
+using Api.Configs.JWT;
+using Api.Configs.Swagger;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.Diagnostics.CodeAnalysis;
 
@@ -34,8 +34,8 @@ namespace Api
             var app = builder.Build();
 
             var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-            
-            if(IsDevelopment)
+
+            if (IsDevelopment)
             {
                 app.UseCors("Development");
                 app.UseDeveloperExceptionPage();
@@ -64,7 +64,7 @@ namespace Api
             string db = databaseUri.LocalPath.Trim('/');
             string[] userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
 
-            return  $"User ID={userInfo[0]};Password={userInfo[1]};Host={databaseUri.Host};" +
+            return $"User ID={userInfo[0]};Password={userInfo[1]};Host={databaseUri.Host};" +
                     $"Port={databaseUri.Port};Database={db};Pooling=true;" +
                     $"SSL Mode=Require;Trust Server Certificate=True;";
         }

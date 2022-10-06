@@ -10,7 +10,7 @@ namespace Business.Models
         public Guid Id { get; set; }
         public IEnumerable<Asset> Assets { get; set; }
         public double TotalTaxes { get; set; }
-        public double TotalPaid { get => Assets.Sum(x => x.TotalPaid) + TotalTaxes; }
+        public double TotalPaid => Assets.Sum(x => x.TotalPaid) + TotalTaxes;
         public DateTime PurchaseDate { get; set; }
         public Guid CreatedByUserId { get; set; }
         public DateTime CreatedAt { get; set; }

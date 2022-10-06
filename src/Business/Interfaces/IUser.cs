@@ -6,6 +6,6 @@
         Guid GetUserId();
         string GetUserEmail();
         bool IsAuthenticated();
-        bool IsInRole(string roleName);
+        bool IsInRole( string roleName );
     }
 }
